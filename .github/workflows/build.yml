@@ -6,7 +6,7 @@ permissions:
   contents: write
 
 env:
-  OUTPUT_FILE_NAME: kaslr-presentation.pdf
+  OUTPUT_FILE_NAME: kaslr-talk.pdf
 
 jobs:
   build:

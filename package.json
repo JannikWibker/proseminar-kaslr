@@ -1,0 +1,32 @@
+{
+  "name": "proseminar-kaslr",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "npx @marp-team/marp-cli@2.2.0 -s",
+    "build": "npx @marp-team/marp-cli@2.2.0"
+  },
+  "marp": {
+    "inputDir": "./slides/",
+    "output": "output",
+    "themeSet": "./theme/",
+    "theme": "./theme/minimal.css",
+    "engine": "./engine/engine.js",
+    "html": true,
+    "pdf": true,
+    "allowLocalFiles": true
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "markdown-it-html5-embed": "^1.0.0",
+    "markdown-it-mark": "^3.0.1",
+    "markdown-it-multimd-table": "^4.2.0",
+    "markdown-it-sub": "^1.0.0",
+    "markdown-it-sup": "^1.0.0",
+    "markdown-it-task-lists": "^2.1.1",
+    "markdown-it-underline": "^1.0.1"
+  }
+}

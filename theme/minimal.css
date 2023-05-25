@@ -4,11 +4,15 @@
 */
 @charset "UTF-8";
 
+@import 'https://fonts.bunny.net/css?family=rubik:300,300i,400,400i,500,500i';
+:root {
+  --font: Rubik;
+  --monospace-font: 'Menlo';
+}
+
 @import 'minimal-colors';
 @import 'minimal-headings';
 @import 'minimal-code';
-
-@import 'https://fonts.bunny.net/css?family=rubik:300,300i,400,400i,500,500i';
 
 p,
 blockquote {
@@ -100,7 +104,7 @@ section {
   background-color: var(--color-background);
   color: var(--color-foreground);
   font-size: 35px;
-  font-family: Rubik, "Avenir Next", Avenir, "Trebuchet MS", "Segoe UI", sans-serif;
+  font-family: var(--font), "Avenir Next", Avenir, "Trebuchet MS", "Segoe UI", sans-serif;
   height: 720px;
   line-height: 1.5;
   letter-spacing: 1.25px;

@@ -2,7 +2,7 @@
 
 code {
   display: inline-block;
-  font-family: "Menlo", monospace;
+  font-family: var(--monospace-font), monospace;
   font-size: 0.8em;
   letter-spacing: 0;
   margin: -0.1em 0.2em;

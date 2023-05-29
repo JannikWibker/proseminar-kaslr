@@ -54,6 +54,33 @@ Without knowing the layout of the kernel address space, it is much harder to exp
 
 ---
 
+## Timeline of (K)ASLR Implementations
+
+
+![](./assets/kaslr_timeline_01.svg)
+
+---
+
+## Timeline of (K)ASLR Implementations
+
+
+![](./assets/kaslr_timeline_02.svg)
+
+---
+
+## Timeline of (K)ASLR Implementations
+
+
+![](./assets/kaslr_timeline_03.svg)
+
+---
+
+## Timeline of (K)ASLR Implementations
+
+
+![](./assets/kaslr_timeline_04.svg)
+
+---
 
 ## Implementation Differences between OSes
 

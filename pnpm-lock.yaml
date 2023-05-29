@@ -8,8 +8,8 @@ dependencies:
     specifier: ^3.0.1
     version: 3.0.1
   markdown-it-multimd-table:
-    specifier: ^4.2.0
-    version: 4.2.0
+    specifier: ^4.2.2
+    version: 4.2.2
   markdown-it-sub:
     specifier: ^1.0.0
     version: 1.0.0
@@ -52,8 +52,8 @@ packages:
     resolution: {integrity: sha512-HyxjAu6BRsdt6Xcv6TKVQnkz/E70TdGXEFHRYBGLncRE9lBFwDNLVtFojKxjJWgJ+5XxUwLaHXy+2sGBbDn+4A==}
     dev: false
 
-  /markdown-it-multimd-table@4.2.0:
-    resolution: {integrity: sha512-wFpb8TSQ9josQrAlOg1toEAHHSGYQZ4krBKfpejPQ+lq3oudnxCNW4S6gYMcRbkrtrfX/ND2njr4belnKt3fBg==}
+  /markdown-it-multimd-table@4.2.2:
+    resolution: {integrity: sha512-aIrxGBS/klf2Q10ua/YUhxEouyvS9+NZbME2b3q4YHOFUpHLdTrBqHKssDnX+KVmctcsdR0yQxhkJf8K7UGQ5g==}
     dev: false
 
   /markdown-it-sub@1.0.0:

@@ -10,6 +10,93 @@ _paginate: false
 
 ---
 
+## What is (K)ASLR?
+
+**ASLR** stands for **Address Space Layout Randomization**
+
+**KASLR** stands for **Kernel Address Space Layout Randomization**
+
+---
+
+## What is ASLR?
+
+What is contained in the address space of a process?
+- the executable: `.text`, `.data`, `.bss`, `.rodata`, etc.
+- dynamically linked libraries
+- allocated pages (could be many)
+- the stack
+- *the kernel address space*
+
+---
+
+## What is ASLR?
+
+With ASLR the locations of all these things (excluding the kernel address space) are randomized.
+
+---
+
+## What is KASLR?
+
+Kernel address space is mapped into every process
+(reduces overhead when doing syscalls (flushing TLB, etc.))
+
+Cannot be read (or written to) from user space, but:
+- There might be arbitrary read / write exploits
+- Parts of the kernel address space are marked executable
+
+---
+
+## What is KASLR?
+
+**Possible solution**: Randomize the kernel address space as well.
+
+Without knowing the layout of the kernel address space, it is much harder to exploit.
+
+---
+
+
+## Implementation Differences between OSes
+
+- Entropy
+- Address ranges
+
+---
+
+## Implementation Differences between OSes
+
+- Entropy
+- Address ranges
+- Separation of kernel and modules
+  - Windows and Linux separate them; MacOS does not
+
+---
+
+## Implementation Differences between OSes
+
+- Entropy
+- Address ranges
+- Separation of kernel and modules
+  - Windows and Linux separate them; MacOS does not
+- Rules which are followed while allocating
+  - Empty pages in between modules (Linux does this)
+  - Further randomization inside of a page (Windows does this)
+  - Inherent ordering of the kernel and/or modules
+
+---
+
+## Entropy provided by KASLR
+
+| OS      | Kernel/Modules  | Entropy     | Align Size |
+| ------- | --------------- | ----------- | ---------- |
+| Linux   | Kernel          | 9 bits      | 2MB        |
+|         | Modules         | **TODO**    | 4KB        |
+| Windows | Kernel          | 13 bits     | 2MB        |
+|         | Modules         | **TODO**    | **TODO**   |
+| macOS   | Kernel          | 8 bits      | 2MB        |
+
+> This is subject to change with each kernel/OS release
+
+---
 
 ## Attacks against KASLR
 

@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "npx @marp-team/marp-cli@2.2.0 -s",
-    "build": "npx @marp-team/marp-cli@2.2.0"
+    "build": "npx @marp-team/marp-cli@2.2.0 --pdf-notes"
   },
   "marp": {
     "inputDir": "./slides/",

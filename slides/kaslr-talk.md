@@ -66,6 +66,9 @@ Without knowing the layout of the kernel address space, it is much harder to exp
 
 ![](./assets/kaslr_timeline_02.svg)
 
+<!-- Windows Vista's implementation wasn't all too great, it got greatly improved in later versions -->
+<!-- Windows 10 did quite a few improvements once again (Windows 10 1607 split up kernel and module address ranges for KASLR) -->
+
 ---
 
 ## Timeline of (K)ASLR Implementations
@@ -109,6 +112,8 @@ Without knowing the layout of the kernel address space, it is much harder to exp
   - Further randomization inside of a page (Windows does this)
   - Inherent ordering of the kernel and/or modules
 
+<!-- Linux having empty pages in-between is something that DrK exploits; using this DrK can differentiate modules from each other and doesn't recognize them as just one "big blob of pages" -->
+
 ---
 
 ## Entropy provided by KASLR
@@ -123,6 +128,10 @@ Without knowing the layout of the kernel address space, it is much harder to exp
 
 > This is subject to change with each kernel/OS release
 
+<!-- These numbers are kind of hard to come by; they change quite often, sources state different numbers; address ranges and alignment sizes don't match the given entropy, etc. -->
+<!-- No two pages can share the same address, this means that the given entropy is only true for the first page being allocated -->
+<!-- If specific alignment rules (A must come before B) are in place the entropy for B is greatly dependant on A -->
+
 ---
 
 ## Attacks against KASLR
@@ -134,6 +143,8 @@ They all try to gather information about the memory layout of the kernel. (If po
 - data structures
 - drivers / modules
 
+<!-- syscall trampoline, PCB/TCB, filesystem caches, page tables, etc. -->
+
 ---
 
 ## Attacks against KASLR
@@ -144,6 +155,11 @@ They all try to gather information about the memory layout of the kernel. (If po
 
 All of those need some sort of explicit exploit as this isn't normally possible from user space.
 
+<!-- Spectre and Meltdown are examples of exploits which can read actual data -->
+<!-- There have been quite a few attacks all with roughly the same fundamental idea -->
+<!-- Trigger a read somewhere you're not supposed to, get this value to be cached somewhere without proper cleanup, check if value has been cached or not (if not cached then not mapped, etc.) -->
+<!-- sometimes TSX based, sometimes SGX based (Software Guard Extension; think like a "secure enclave") -->
+
 ---
 
 ## Attacks against KASLR - DrK
@@ -152,6 +168,7 @@ One of those is called **DrK**.
 
 Based on **TSX** (*Intel Transactional Synchronization Extension*)
 
+<!-- most likely stands for DeRandomize Kernel -->
 
 ---
 
@@ -193,6 +210,8 @@ DrK abuses that exceptions are treated differently in TSX than otherwise.
 
 If an exception (e.g. **page fault**, **access violation**) occurs, the transaction is aborted and rolled back, but the **kernel is not notified**.
 
+<!-- abort handler is immediately called without notifying the OS, the OS also isn't notified later on; it basically never notices that the exceptions took place -->
+
 ---
 
 ## Attacks against KASLR - DrK
@@ -203,6 +222,10 @@ Page faults and access violations take different amounts of time depending on th
 Measure the clock cycles for memory accesses and infer wether it is:
 - mapped / unmapped
 - executable / not executable
+
+<!-- First check for mapped and unmapped -->
+<!-- Then for the mapped pages repeat and check for X/NX -->
+<!-- Might have to do this repeatedly to get the most accurate results though -->
 
 ---
 
@@ -221,6 +244,9 @@ uint64_t do_probe_memory(void* addr) {
 }
 ```
 
+<!-- mapped vs unmapped check -->
+<!-- source code simplified but the actual code isn't all too complicated either, can be found on github -->
+
 ---
 
 ## Attacks against KASLR - DrK
@@ -238,11 +264,16 @@ uint64_t do_probe_memory(void* addr) {
 }
 ```
 
+<!-- executable vs non-executable check -->
+
 ---
 
 ## Attacks against KASLR - DrK
 
 ![bg height:400px](./assets/m_vs_u_timing.png)
+![bg height:400px](./assets/x_vs_nx_timing.png)
+
+<!-- The lines in each figure represent the thresholds using which categorization happens -->
 
 ---
 
@@ -256,6 +287,7 @@ uint64_t do_probe_memory(void* addr) {
 - Performance impacts ranging from 0.28% to ~20%,
   **roughly 5%** for most workloads
 
+<!-- The higher performance impacts are coming mostly from databases (postgres, redis); compiling the linux kernel also takes a 5% hit on haswell -->
 
 ---
 
@@ -264,6 +296,11 @@ uint64_t do_probe_memory(void* addr) {
 - Reduce kernel address space mapped in user space
 - Only include absolutely necessary pages needed for syscalls
 - No page table entries $\implies$ no timing attacks
+
+<!-- All exploits rely on entries being present in the page table and cache invalidation not being perfect after a read has already occured -->
+<!-- If these entries didn't exist outright they can't be exploited -->
+<!-- KPTI lowers the attack surface greatly by making the address space way slimmer -->
+<!-- Windows and MacOS had similar fixed -->
 
 ![bg right h:500px](./assets/kpti_memory_layout.svg)
 
@@ -278,3 +315,6 @@ Here's a quick run down of what was covered:
 - Why does it exist?
 - DrK: a TSX-based attack
 - KPTI: a mitigation for DrK and similar attacks
+
+<!-- Could mention FGKASLR and re-randomizing the kernel address space if it comes up naturally -->
+<!-- Also consider talking about randomizing the base address of the kernel inside of the mapped region (Windows 10 does this) -->

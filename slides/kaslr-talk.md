@@ -243,5 +243,38 @@ uint64_t do_probe_memory(void* addr) {
 ## Attacks against KASLR - DrK
 
 ![bg height:400px](./assets/m_vs_u_timing.png)
-![bg height:400px](./assets/n_vs_nx_timing.png)
 
+---
+
+## KAISER / KPTI
+
+- **K**ernel **P**age **T**able **I**solation, previously known as KAISER
+- Introduced in Linux 4.15
+- Mitigates DrK and a few similar attacks
+- Mitigates meltdown (was published **before** meltdown)
+- Doesn't mitigate spectre
+- Performance impacts ranging from 0.28% to ~20%,
+  **roughly 5%** for most workloads
+
+
+---
+
+## KAISER / KPTI
+
+- Reduce kernel address space mapped in user space
+- Only include absolutely necessary pages needed for syscalls
+- No page table entries $\implies$ no timing attacks
+
+![bg right h:500px](./assets/kpti_memory_layout.svg)
+
+---
+
+# Overview
+
+**Thanks for your attention!** - **Do you have any questions?**
+
+Here's a quick run down of what was covered:
+- What is KASLR?
+- Why does it exist?
+- DrK: a TSX-based attack
+- KPTI: a mitigation for DrK and similar attacks

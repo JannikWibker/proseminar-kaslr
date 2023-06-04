@@ -109,7 +109,7 @@ Without knowing the layout of the kernel address space, it is much harder to exp
 - Entropy
 - Address ranges
 - Separation of kernel and modules
-  - Windows and Linux separate them; MacOS does not
+  - Windows and Linux separate them; macOS does not
 
 ---
 
@@ -120,7 +120,7 @@ Without knowing the layout of the kernel address space, it is much harder to exp
 - Entropy
 - Address ranges
 - Separation of kernel and modules
-  - Windows and Linux separate them; MacOS does not
+  - Windows and Linux separate them; macOS does not
 - Rules which are followed while allocating
   - Empty pages in between modules (Linux does this)
   - Further randomization inside of a page (Windows does this)
@@ -345,7 +345,7 @@ uint64_t do_probe_memory(void* addr) {
 <!-- All exploits rely on entries being present in the page table and cache invalidation not being perfect after a read has already occured -->
 <!-- If these entries didn't exist outright they can't be exploited -->
 <!-- KPTI lowers the attack surface greatly by making the address space way slimmer -->
-<!-- Windows and MacOS had similar fixed -->
+<!-- Windows and macOS had similar fixed -->
 
 ![bg right h:500px](./assets/kpti_memory_layout.svg)
 

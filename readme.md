@@ -1,6 +1,6 @@
 # Slides
 
-Uses [marp](https://marp.app) for slides along with a few markdown-it plugins and a custom theme.
+Uses [marp](https://marp.app) for slides along with a few markdown-it plugins and a [custom theme](https://github.com/JannikWibker/marp-theme).
 
 [pnpm](https://pnpm.io) was chosen as the package manager, but npm works as a drop-in replacement.
 
@@ -17,3 +17,7 @@ pnpm build # for building slides
 - [Differences between ASLR, KASLR and KARL](https://www.daniloaz.com/en/differences-between-aslr-kaslr-and-karl/) (2017) by Daniel López Azaña
 - [Windows 10 KASLR Recovery with TSX](https://blog.frizk.net/2016/11/windows-10-kaslr-recovery-with-tsx.html) (2016) by Ulf Frisk
 - [KAISER: hiding the kernel from user space](https://lwn.net/Articles/738975/) (2017) by Jonathan Corbet
+
+### Non-literature
+
+This repo uses the [Rosé Pine](https://rosepinetheme.com/) theme (base and dawn variants) for code blocks.

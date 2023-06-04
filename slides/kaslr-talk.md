@@ -62,6 +62,8 @@ Without knowing the layout of the kernel address space, it is much harder to exp
 
 ---
 
+<!-- __paginate: hold -->
+
 ## Timeline of (K)ASLR Implementations
 
 
@@ -72,12 +74,17 @@ Without knowing the layout of the kernel address space, it is much harder to exp
 
 ---
 
+<!-- __paginate: hold -->
+
 ## Timeline of (K)ASLR Implementations
 
 
 ![](./assets/kaslr_timeline_03.svg)
 
 ---
+
+<!-- __paginate: hold -->
+
 
 ## Timeline of (K)ASLR Implementations
 
@@ -95,6 +102,8 @@ Without knowing the layout of the kernel address space, it is much harder to exp
 
 ---
 
+<!-- __paginate: hold -->
+
 ## Implementation Differences between OSes
 
 - Entropy
@@ -103,6 +112,8 @@ Without knowing the layout of the kernel address space, it is much harder to exp
   - Windows and Linux separate them; MacOS does not
 
 ---
+
+<!-- __paginate: hold -->
 
 ## Implementation Differences between OSes
 
@@ -174,13 +185,23 @@ One of those is called **DrK**.
 
 Based on **TSX** (*Intel Transactional Synchronization Extension*)
 
+<br />
+<br />
+<br />
+<br />
+<span style="font-size: 28px">
+
+> DrK: "Breaking Kernel Address Space Layout Randomization with Intel TSX" (2016) by Yeongjin Jang, Sangho Lee, and Taesoo Kim.
+
+</span>
+
 <!-- most likely stands for DeRandomize Kernel -->
 
 ---
 
 ## Attacks against KASLR - TSX
 
-Similar concept to database transactions.
+Similar in concept to database transactions.
 
 ```
 * start transaction
@@ -212,16 +233,9 @@ if (_xbegin() == _XBEGIN_STARTED) {
 
 ## Attacks against KASLR - DrK
 
-**DrK**^1^ abuses that exceptions are treated differently in TSX than otherwise.
+DrK abuses that exceptions are treated differently in TSX than otherwise.
 
 If an exception (e.g. **page fault**, **access violation**) occurs, the transaction is aborted and rolled back, but the **kernel is not notified**.
-
-<br />
-<span style="font-size: 28px">
-
-> 1: "Breaking Kernel Address Space Layout Randomization with Intel TSX" (2016) by Yeongjin Jang, Sangho Lee, and Taesoo Kim.
-
-</span>
 
 <!-- abort handler is immediately called without notifying the OS, the OS also isn't notified later on; it basically never notices that the exceptions took place -->
 
@@ -261,6 +275,8 @@ uint64_t do_probe_memory(void* addr) {
 <!-- source code simplified but the actual code isn't all too complicated either, can be found on github -->
 
 ---
+
+<!-- __paginate: hold -->
 
 ## Attacks against KASLR - DrK
 
@@ -335,7 +351,10 @@ uint64_t do_probe_memory(void* addr) {
 
 ---
 
-<!-- footer: "" -->
+<!--
+footer: ""
+paginate: false
+-->
 
 # Overview
 

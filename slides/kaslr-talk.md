@@ -342,8 +342,8 @@ uint64_t do_probe_memory(void* addr) {
 **Thanks for your attention!** - **Do you have any questions?**
 
 Here's a quick run down of what was covered:
-- What is KASLR?
-- Why does it exist?
+- What are ASLR and KASLR?
+- OS Implementation Differences
 - DrK: a TSX-based attack
 - KPTI: a mitigation for DrK and similar attacks
 

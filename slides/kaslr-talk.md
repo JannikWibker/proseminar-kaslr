@@ -10,6 +10,8 @@ _paginate: false
 
 ---
 
+<!-- footer: What are ASLR and KASLR -->
+
 ## What is (K)ASLR?
 
 **ASLR** stands for **Address Space Layout Randomization**
@@ -24,14 +26,10 @@ What is contained in the address space of a process?
 - the executable: `.text`, `.data`, `.bss`, `.rodata`, etc.
 - dynamically linked libraries
 - allocated pages (could be many)
-- the stack
+- the stack(s)
 - *the kernel address space*
 
----
-
-## What is ASLR?
-
-With ASLR the locations of all these things (excluding the kernel address space) are randomized.
+ASLR randomizes these locations (excluding the kernel address space).
 
 ---
 
@@ -42,7 +40,7 @@ Kernel address space is mapped into every process
 
 Cannot be read (or written to) from user space, but:
 - There might be arbitrary read / write exploits
-- Parts of the kernel address space are marked executable
+- Could build ROP chains in the kernel stack with gadgets from the kernel
 
 ---
 
@@ -50,7 +48,10 @@ Cannot be read (or written to) from user space, but:
 
 **Possible solution**: Randomize the kernel address space as well.
 
-Without knowing the layout of the kernel address space, it is much harder to exploit.
+Without knowing the layout of the kernel address space, it is much harder to exploit:
+
+- Would have to find the kernel stack first.
+- Would have to find addresses of useful kernel code first (similar to user space code with ASLR).
 
 ---
 
@@ -85,6 +86,8 @@ Without knowing the layout of the kernel address space, it is much harder to exp
 
 ---
 
+<!-- footer: Implementation Differences -->
+
 ## Implementation Differences between OSes
 
 - Entropy
@@ -118,16 +121,17 @@ Without knowing the layout of the kernel address space, it is much harder to exp
 
 ## Entropy provided by KASLR
 
-| OS      | Kernel/Modules  | Entropy     | Align Size |
+| OS      | Kernel/Modules  | Entropy     | Alignment Size |
 | ------- | --------------- | ----------- | ---------- |
-| Linux   | Kernel          | 9 bits      | 2MB        |
-|         | Modules         | **TODO**    | 4KB        |
+| Linux   | Kernel          | 6 bits      | 16MB       |
+|         | Modules         | 10 bits     | 4KB        |
 | Windows | Kernel          | 13 bits     | 2MB        |
-|         | Modules         | **TODO**    | **TODO**   |
+|         | Modules         | 13 bits     | 2MB        |
 | macOS   | Kernel          | 8 bits      | 2MB        |
 
-> This is subject to change with each kernel/OS release
+> Subject to change with each kernel/OS release, data from 2016.
 
+<!-- These numbers are partially out of date, apparently the alignment size for linux/kernel changed to 2MB resulting in 9 bits of entropy, other change may also have occured -->
 <!-- These numbers are kind of hard to come by; they change quite often, sources state different numbers; address ranges and alignment sizes don't match the given entropy, etc. -->
 <!-- No two pages can share the same address, this means that the given entropy is only true for the first page being allocated -->
 <!-- If specific alignment rules (A must come before B) are in place the entropy for B is greatly dependant on A -->
@@ -146,6 +150,8 @@ They all try to gather information about the memory layout of the kernel. (If po
 <!-- syscall trampoline, PCB/TCB, filesystem caches, page tables, etc. -->
 
 ---
+
+<!-- footer: Attacks against KASLR -->
 
 ## Attacks against KASLR
 
@@ -206,9 +212,16 @@ if (_xbegin() == _XBEGIN_STARTED) {
 
 ## Attacks against KASLR - DrK
 
-DrK abuses that exceptions are treated differently in TSX than otherwise.
+**DrK**^1^ abuses that exceptions are treated differently in TSX than otherwise.
 
 If an exception (e.g. **page fault**, **access violation**) occurs, the transaction is aborted and rolled back, but the **kernel is not notified**.
+
+<br />
+<span style="font-size: 28px">
+
+> 1: "Breaking Kernel Address Space Layout Randomization with Intel TSX" (2016) by Yeongjin Jang, Sangho Lee, and Taesoo Kim.
+
+</span>
 
 <!-- abort handler is immediately called without notifying the OS, the OS also isn't notified later on; it basically never notices that the exceptions took place -->
 
@@ -219,7 +232,7 @@ If an exception (e.g. **page fault**, **access violation**) occurs, the transact
 **Idea**:
 Page faults and access violations take different amounts of time depending on the status of the page
 
-Measure the clock cycles for memory accesses and infer wether it is:
+Measure the clock cycles for memory accesses and infer whether it is:
 - mapped / unmapped
 - executable / not executable
 
@@ -273,9 +286,26 @@ uint64_t do_probe_memory(void* addr) {
 ![bg height:400px](./assets/m_vs_u_timing.png)
 ![bg height:400px](./assets/x_vs_nx_timing.png)
 
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+
+<span style="font-size: 28px">
+
+**Source**: "Breaking Kernel Address Space Layout Randomization with Intel TSX" (2016) by Jang et al., Page 5, Figure 6
+
+</span>
+
 <!-- The lines in each figure represent the thresholds using which categorization happens -->
 
 ---
+
+<!-- footer: Mitigations -->
 
 ## KAISER / KPTI
 
@@ -283,7 +313,6 @@ uint64_t do_probe_memory(void* addr) {
 - Introduced in Linux 4.15
 - Mitigates DrK and a few similar attacks
 - Mitigates meltdown (was published **before** meltdown)
-- Doesn't mitigate spectre
 - Performance impacts ranging from 0.28% to ~20%,
   **roughly 5%** for most workloads
 
@@ -305,6 +334,8 @@ uint64_t do_probe_memory(void* addr) {
 ![bg right h:500px](./assets/kpti_memory_layout.svg)
 
 ---
+
+<!-- footer: "" -->
 
 # Overview
 

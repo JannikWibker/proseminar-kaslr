@@ -62,7 +62,7 @@ Without knowing the layout of the kernel address space, it is much harder to exp
 
 ---
 
-<!-- __paginate: hold -->
+<!-- _paginate: hold -->
 
 ## Timeline of (K)ASLR Implementations
 
@@ -74,7 +74,7 @@ Without knowing the layout of the kernel address space, it is much harder to exp
 
 ---
 
-<!-- __paginate: hold -->
+<!-- _paginate: hold -->
 
 ## Timeline of (K)ASLR Implementations
 
@@ -83,7 +83,7 @@ Without knowing the layout of the kernel address space, it is much harder to exp
 
 ---
 
-<!-- __paginate: hold -->
+<!-- _paginate: hold -->
 
 
 ## Timeline of (K)ASLR Implementations
@@ -102,7 +102,7 @@ Without knowing the layout of the kernel address space, it is much harder to exp
 
 ---
 
-<!-- __paginate: hold -->
+<!-- _paginate: hold -->
 
 ## Implementation Differences between OSes
 
@@ -113,7 +113,7 @@ Without knowing the layout of the kernel address space, it is much harder to exp
 
 ---
 
-<!-- __paginate: hold -->
+<!-- _paginate: hold -->
 
 ## Implementation Differences between OSes
 
@@ -261,7 +261,7 @@ uint64_t do_probe_memory(void* addr) {
 
 ---
 
-<!-- __paginate: hold -->
+<!-- _paginate: hold -->
 
 ## Attacks against KASLR - DrK
 

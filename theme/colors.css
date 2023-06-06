@@ -6,7 +6,7 @@ section {
 
   --color-background: white;
   --color-foreground: black;
-  --color-accent: #e0b3f0;
+  --color-accent: #aa96df;
   --color-highlight: #ae3f98;
   --color-highlight-secondary: #6ad681;
 
@@ -19,7 +19,7 @@ section:where(.invert) {
   --color-background: black;
   --color-foreground: white;
   --color-accent: #ae3f98;
-  --color-highlight: #e0b3f0;
+  --color-highlight: #aa96df;
   --color-highlight-secondary: #3fa659;
 
   --color-neutral-gray: #30363d;

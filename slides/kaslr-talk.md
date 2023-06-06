@@ -184,9 +184,8 @@ All of those need some sort of explicit exploit as this isn't normally possible 
 One of those is called **DrK**.
 
 Based on **TSX** (*Intel Transactional Synchronization Extension*)
+- Offers transactions which are similar in concept to database transactions
 
-<br />
-<br />
 <br />
 <br />
 <span style="font-size: 28px">
@@ -201,20 +200,6 @@ Based on **TSX** (*Intel Transactional Synchronization Extension*)
 
 ## Attacks against KASLR - TSX
 
-Similar in concept to database transactions.
-
-```
-* start transaction
-* do work (or abort)
-* commit transaction
-```
-
-If `do work` fails, everything done prior in the transaction is rolled back.
-
----
-
-## Attacks against KASLR - TSX
-
 ```c
 // start transaction, if rolled back execution continues from here
 // but with a different return value (status code of transaction)
@@ -223,7 +208,7 @@ if (_xbegin() == _XBEGIN_STARTED) {
   ... // do work
 
   _xend();        // commit transaction
-  _xabort(status) // or abort with status code
+  _xabort(status) // or abort with status code (=> rollback)
 } else {
   // abort handler
 }

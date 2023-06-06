@@ -132,7 +132,7 @@ section::after {
 section header,
 section footer,
 section section::after {
-  color: var(--color-accent);
+  color: var(--color-highlight);
 }
 
 section > *:first-child,

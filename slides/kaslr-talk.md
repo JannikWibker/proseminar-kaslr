@@ -36,7 +36,7 @@ ASLR randomizes these locations (excluding the kernel address space).
 ## What is KASLR?
 
 Kernel address space is mapped into every process
-(reduces overhead when doing syscalls (flushing TLB, etc.))
+- Reduces overhead when doing syscalls (flushing TLB, etc.)
 
 Cannot be read (or written to) from user space, but:
 - There might be arbitrary read / write exploits
@@ -340,7 +340,8 @@ uint64_t do_probe_memory(void* addr) {
 
 - Reduce kernel address space mapped in user space
 - Only include absolutely necessary pages needed for syscalls
-- No page table entries $\implies$ no timing attacks
+- No page table entries
+  $\implies$ no timing attacks
 
 <!-- All exploits rely on entries being present in the page table and cache invalidation not being perfect after a read has already occured -->
 <!-- If these entries didn't exist outright they can't be exploited -->

@@ -24,12 +24,6 @@ pre code {
   font-size: 0.7em;
 }
 
-
-/* TODO: what is this needed for?, we don't have auto-scaling enabled */
-pre::part(auto-scaling) {
-  max-height: calc(580px - 1em);
-}
-
 section code {
   border-radius: 8px;
   color: var(--color-background);

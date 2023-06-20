@@ -74,7 +74,11 @@ jobs:
       - name: Compile LaTeX document
         uses: xu-cheng/latex-action@v2
         with:
-          post_compile: mv report/report.pdf output/${{ env.REPORT_OUTPUT_FILE_NAME }}.pdf
+          post_compile: |
+            ls -lha
+            stat report.pdf
+            mv report.pdf ../output/${{ env.REPORT_OUTPUT_FILE_NAME }}
+            ls -lha ..
           root_file: |
             report.tex
             sections/*.tex
@@ -85,7 +89,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: PDF
-          path: output/report.pdf
+          path: "output/${{ env.REPORT_OUTPUT_FILE_NAME }}"
 
   release:
     # only create release if a tag starting with v is pushed

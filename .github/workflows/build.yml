@@ -6,10 +6,11 @@ permissions:
   contents: write
 
 env:
-  OUTPUT_FILE_NAME: kaslr-talk.pdf
+  SLIDES_OUTPUT_FILE_NAME: kaslr-talk.pdf
+  REPORT_OUTPUT_FILE_NAME: kaslr-report.pdf
 
 jobs:
-  build:
+  build-slides:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -62,12 +63,36 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: PDF
-          path: "output/${{ env.OUTPUT_FILE_NAME }}"
+          path: "output/${{ env.SLIDES_OUTPUT_FILE_NAME }}"
+
+  build-report:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Compile LaTeX document
+        uses: xu-cheng/latex-action@v2
+        with:
+          post_compile: |
+            mkdir -p ../output
+            mv report.pdf ../output/${{ env.REPORT_OUTPUT_FILE_NAME }}
+          root_file: |
+            report.tex
+            sections/*.tex
+          working_directory: report
+          glob_root_file: true
+
+      - name: Create artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: PDF
+          path: "output/${{ env.REPORT_OUTPUT_FILE_NAME }}"
 
   release:
     # only create release if a tag starting with v is pushed
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
-    needs: [build]
+    needs: [build-slides, build-report]
     runs-on: ubuntu-latest
     steps:
       - name: Download artifact
@@ -79,4 +104,6 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           draft: false
-          files: "output/${{ env.OUTPUT_FILE_NAME }}"
+          files: |
+            output/${{ env.SLIDES_OUTPUT_FILE_NAME }}
+            output/${{ env.REPORT_OUTPUT_FILE_NAME }}

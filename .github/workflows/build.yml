@@ -83,7 +83,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: PDF
-          path: "report/template.pdf"
+          path: report.pdf
 
   release:
     # only create release if a tag starting with v is pushed

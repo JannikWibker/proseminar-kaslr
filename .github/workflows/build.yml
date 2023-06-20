@@ -77,13 +77,16 @@ jobs:
           post_compile: |
             ls -lha
             stat report.pdf
-            mv report.pdf ../output/${{ env.REPORT_OUTPUT_FILE_NAME }}
+            # mv report.pdf ../output/${{ env.REPORT_OUTPUT_FILE_NAME }} | exit 0
             ls -lha ..
           root_file: |
             report.tex
             sections/*.tex
           working_directory: report
           glob_root_file: true
+
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
 
       - name: Create artifact
         uses: actions/upload-artifact@v3

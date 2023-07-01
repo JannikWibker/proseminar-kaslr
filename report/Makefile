@@ -64,7 +64,7 @@ help:
 	@echo
 
 clean = $(target) $(optional)
-tex_deps =
+tex_deps = abstract.tex
 
 ##############################################################################
 ifeq ($(wildcard .git),.git)

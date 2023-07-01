@@ -1,4 +1,4 @@
-name: Build slides and create action artifact
+name: Build slides and report, create artifacts and release on tag
 
 on: push
 
@@ -62,7 +62,7 @@ jobs:
       - name: Create artifact
         uses: actions/upload-artifact@v3
         with:
-          name: PDF
+          name: Slides PDF
           path: "output/${{ env.SLIDES_OUTPUT_FILE_NAME }}"
 
   build-report:
@@ -86,7 +86,7 @@ jobs:
       - name: Create artifact
         uses: actions/upload-artifact@v3
         with:
-          name: PDF
+          name: Report PDF
           path: "output/${{ env.REPORT_OUTPUT_FILE_NAME }}"
 
   release:

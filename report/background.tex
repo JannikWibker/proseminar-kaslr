@@ -1,0 +1,31 @@
+The address space of a user space program will typically contain the following:
+
+\begin{itemize}
+  \item The executable: \lstinline{.text}, \lstinline{.data}, \lstinline{.bss}, \lstinline{.rodata} and other sections contained or described in the ELF binary.
+  \item Dynamically linked libraries, such as libc
+  \item Pages allocated by the program itself
+  \item The stack. In case of a multi-threaded program each thread has its own stack, all sharing one common address space.
+  \item The kernel address space
+\end{itemize}
+
+When not using ASLR and KASLR the placement of pages is deterministic and the same each time the program executes assuming no outside factors have changed since and the flow through the application hasn't differed.
+This means that attackers can easily guess where a specific page will be allocated to in the virtual address space of the process, especially when this allocation is a dynamic library or happens shortly after startup.
+To combat this Address Space Layout Randomization was introduced, which randomizes the address where a page is placed at.
+ASLR is done at runtime resulting in the memory layout differing with each execution of the program.
+As the kernel is mapped into the address space of every process it does not change its layout when ASLR is enabled.
+Libc and dynamical libraries are a common target used in exploits of which the addresses are most commonly required for the exploit to function, with ASLR this is made harder.
+
+For ASLR to function the executables have to be position independent, meaning that the program works with any base address and does not rely on specific addresses of libraries or pages to function.
+These executables are called Position Independent Executables (or PIE for short).
+The code of such executable is also referred to as Position Independent Code.
+
+\subsection{Kernel Address Space Layout Randomization}
+
+The kernel is mapped into the address space of every process in order to speed up system calls by reducing the amount of context switches required.
+Without the kernel address space being copied into user space every system call would require a context switch to the kernel address space and back incurring a lot of \textbf{T}ranslation \textbf{L}ookaside \textbf{B}uffer (TLB) flushes.
+
+With Kernel Address Space Layout Randomization the previous shortcoming of ASLR is addressed.
+The addresses to where the kernel and its modules or drivers are mapped are randomized at boot time.
+With this the addresses of all pages might not differ each time a program is executed but each time the system is rebooted.
+As a main focus of many malwares is them being able to spread fast and wide it is paramount that the exploit can be reused across systems without having to be custom tailored to the system itself or even the kernel memory layout which is in use since last booting.
+KASLR breaks this assuming it is not possible for the exploit to figure out the kernel memory layout.

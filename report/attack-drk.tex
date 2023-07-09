@@ -1,0 +1,38 @@
+The DrK is an attack against KASLR which derandomizes the kernel address space.
+It has been proposed in the paper ... by ...
+Most of the code necessary to perform the attack can be found on GitHub (TODO link).
+
+The attack builds upon Intel TSX (TODO reference) and performs a timing attack to infer the state of a page (mapped vs. unmapped and executable vs. non-executable).
+This works because with TSX the kernel does not get notified of Page Faults and access violations.
+Furthermore the time it takes the MMU (Memory Managment Unit) to throw a Page Fault exception slightly differs from the time it takes to throw an Access Violation exception.
+Using this the status of a page can be inferred.
+
+\subsection{Intel TSX}
+
+Intel TSX stands for the Intel Transaction Synchronization Extension(s).
+It is an interface using which code can be run transactionally, i.e. segmented into clearly defined transactions, aborted and rolled back including all memory writes if so needed.
+
+Aborting and thus a rollback happens either manually using a directive to abort the transaction or automatically in the case of an exception such as a Page Fault.
+
+\lstset{language=C, basicstyle=\ttfamily,
+        string=[b]', showspaces=false, showtabs=false,
+        caption={Example code for Intel TSX}, captionpos=b}
+\begin{lstlisting}
+// start transaction, if rolled back
+// execution continues from here
+// but with a different return value
+// (status code of transaction)
+if (_xbegin() == _XBEGIN_STARTED) {
+
+  ... // do work
+
+  // commit transaction
+  _xend();
+
+  // or abort with status code
+  // (=> rollback)
+  _xabort(status)
+} else {
+  // abort handler
+}
+\end{lstlisting}

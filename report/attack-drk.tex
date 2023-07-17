@@ -55,7 +55,57 @@ For a page that is known to be mapped (but inaccessible from userspace, meaning 
 
 \subsection{Crafting the attack}
 
-TODO: code blocks
+Combining the previous leads to the following exploit implementation.
+
+By reading from a memory address a Page Fault will be generated if the page is unmapped and an Access Violation if the page is mapped but inaccessible from userspace.
+To achieve this inline assembly is used to move the value at the given address into a register, i.e. a very simple method to read from a concrete memory address.
+
+This function will be called for each page and the timing results interpreted afterwards.
+
+\lstset{language=C, basicstyle=\ttfamily,
+        string=[b]', showspaces=false, showtabs=false,
+        caption={Example code for Intel TSX}, captionpos=b}
+\begin{lstlisting}
+uint64_t do_probe_memory(void* addr) {
+  // start timer
+  uint64_t beg = rdtsc_beg();
+
+  if (_xbegin() == _XBEGIN_STARTED) {
+
+    // generates access violation
+    // mapped vs unmapped
+    asm volatile("mov rax, [addr]");
+  } else {
+    // compute time difference
+    return rdtsc_end() - beg;
+  }
+}
+\end{lstlisting}
+
+Similarly the code can be adapted slightly to check for the execution status of a page.
+Here instead of reading from an address we try to jump to it.
+
+\lstset{language=C, basicstyle=\ttfamily,
+        string=[b]', showspaces=false, showtabs=false,
+        caption={Example code for Intel TSX}, captionpos=b}
+\begin{lstlisting}
+uint64_t do_probe_memory(void* addr) {
+  // start timer
+  uint64_t beg = rdtsc_beg();
+
+  if (_xbegin() == _XBEGIN_STARTED) {
+
+    // generates access violation
+    // executable vs non-executable
+    asm volatile(
+      "mov rax, addr; jmp rax"
+    );
+  } else {
+    // compute time difference
+    return rdtsc_end() - beg;
+  }
+}
+\end{lstlisting}
 
 \subsection{Interpreting the results}
 

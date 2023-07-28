@@ -1,15 +1,15 @@
 The DrK is an attack against KASLR which derandomizes the kernel address space.
-It has been proposed in the paper ... by ...
-Most of the code necessary to perform the attack can be found on GitHub (TODO link).
+It has been proposed in the paper \textit{Breaking Kernel Address Space Layout Randomization with Intel TSX} by \textit{Jang, Yeongjin and Lee, Sangho and Kim, Taesoo} \cite{drk}
+Most of the code necessary to perform the attack can be found on \href{https://github.com/sslab-gatech/DrK}{GitHub} \cite{drk-attack-proof-of-concept-github}.
 
-The attack builds upon Intel TSX (TODO reference) and performs a timing attack to infer the state of a page (mapped vs. unmapped and executable vs. non-executable).
+The attack builds upon Intel TSX and performs a timing attack to infer the state of a page (mapped vs. unmapped and executable vs. non-executable).
 This works because with TSX the kernel does not get notified of Page Faults and Access Violations, but the abort handler itself is.
 Furthermore the time it takes the MMU (Memory Managment Unit) to throw a Page Fault exception slightly differs from the time it takes to throw an Access Violation exception.
 Using this the status of a page can be inferred.
 
 \subsection{Intel TSX}
 
-Intel TSX stands for the Intel Transaction Synchronization Extension(s).
+Intel TSX stands for the Intel Transaction Synchronization Extension(s) \cite{intel-tsx-overview}.
 It is an interface using which code can be run transactionally, i.e. segmented into clearly defined transactions, aborted and rolled back including all memory writes if so needed.
 
 Aborting and rolling back happens either manually using a directive to abort the transaction or automatically in the case of an exception such as a Page Fault.

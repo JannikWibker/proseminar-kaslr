@@ -14,7 +14,7 @@ It is an interface using which code can be run transactionally, i.e. segmented i
 
 Aborting and rolling back happens either manually using a directive to abort the transaction or automatically in the case of an exception such as a Page Fault.
 
-\lstset{language=C, basicstyle=\ttfamily,
+\lstset{language=C, basicstyle=\small\ttfamily,
         string=[b]', showspaces=false, showtabs=false,
         caption={Example code for Intel TSX}, captionpos=b}
 \begin{lstlisting}
@@ -62,11 +62,11 @@ To achieve this inline assembly is used to move the value at the given address i
 
 This function will be called for each page and the timing results interpreted afterwards.
 
-\lstset{language=C, basicstyle=\ttfamily,
+\lstset{language=C, basicstyle=\small\ttfamily,
         string=[b]', showspaces=false, showtabs=false,
-        caption={Example code for Intel TSX}, captionpos=b}
+        caption={Mapped vs Unmapped timing test}, captionpos=b}
 \begin{lstlisting}
-uint64_t do_probe_memory(void* addr) {
+uint64_t do_probe_mapped(void* addr) {
   // start timer
   uint64_t beg = rdtsc_beg();
 
@@ -85,11 +85,11 @@ uint64_t do_probe_memory(void* addr) {
 Similarly the code can be adapted slightly to check for the execution status of a page.
 Here instead of reading from an address we try to jump to it.
 
-\lstset{language=C, basicstyle=\ttfamily,
+\lstset{language=C, basicstyle=\small\ttfamily,
         string=[b]', showspaces=false, showtabs=false,
-        caption={Example code for Intel TSX}, captionpos=b}
+        caption={Executable vs Non-Executable timing test}, captionpos=b}
 \begin{lstlisting}
-uint64_t do_probe_memory(void* addr) {
+uint64_t do_probe_executable(void* addr) {
   // start timer
   uint64_t beg = rdtsc_beg();
 
@@ -109,5 +109,61 @@ uint64_t do_probe_memory(void* addr) {
 
 \subsection{Interpreting the results}
 
-TODO: figure with timing data points
-TODO: talk about thresholds to determine category
+Using \lstinline{do_probe_mapped} and \lstinline{do_probe_executable} the status of a page can be inferred.
+To do so the functions are called multiple times and the minimum time is recorded.
+
+\lstset{language=C, basicstyle=\small\ttfamily,
+        string=[b]', showspaces=false, showtabs=false,
+        caption={Collect timing results}, captionpos=b}
+\begin{lstlisting}
+uint64_t probe_memory(
+  int ntimes,
+  int (*do_probe_memory)(void*),
+  void* addr
+) {
+  uint64_t min = UINT64_MAX;
+  while (ntimes --) {
+    uint64_t clk = do_probe_memory(addr);
+    // Only record the minimum
+    // timing observed.
+    if (clk < min)
+      min = clk;
+  }
+  return min;
+}
+\end{lstlisting}
+
+Testing with known mapped pages, executable pages as well as unmapped and non-executable pages leads to the following results being shown in \autoref{fig:timing_m_u} and \autoref{fig:timing_x_nx}.
+
+\begin{figure}[h]
+  \begin{center}
+    \includegraphics[page=1,width=.4\textwidth]{fig/prebuilt_results_M_U}
+  \end{center}
+  \caption{Mapped vs Unmapped}
+  \label{fig:timing_m_u}
+\end{figure}
+
+\begin{figure}[h]
+  \begin{center}
+    \includegraphics[page=1,width=.4\textwidth]{fig/prebuilt_results_X_NX}
+  \end{center}
+  \caption{Executable vs Non-Executable}
+  \label{fig:timing_x_nx}
+\end{figure}
+
+Very clear-cut groupings can be observed, using those a categorization into (M)apped vs (U)nmapped and Executable (X) and Non-Executable (NX) can be done.
+These values are dependent on the CPU being used, different hardware will have different timing thresholds.
+
+\begin{figure}[h]
+  \begin{center}
+    \includegraphics[page=1,width=.4\textwidth]{fig/prebuilt_decision_tree}
+  \end{center}
+  \caption{Decision tree for categorization of pages}
+  \label{fig:decision_tree}
+\end{figure}
+
+All read accesses which take less than 220 cycles are considered to be mapped.
+Accesses which take more than 235 cycles are considered to be unmapped.
+For all pages considered to be mapped an additional check for their execution status is performed.
+If jumping to the address takes less than 200 cycles the page is considered executable.
+More than 220 cycles is considered non-executable.

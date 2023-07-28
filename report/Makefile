@@ -44,7 +44,8 @@ $(target).dvi:: $(target).tex $(target).bib $(eps_targets)
 
 pdf_targets = $(shell grep '\\epsfig\|\\includegraphics' *.tex | grep -v "\%"  | \
                     sed -e 's/file=//' | sed -e 's/,scale=.*}/}/' | \
-                    sed -e 's/.*{\([^{]*\)}.*/\1.pdf/;' )
+                    sed -e 's/.*{\([^{]*\)}.*/\1.pdf/;' | \
+										grep --invert-match "fig/prebuilt" )
 $(target).pdf:: $(target).tex $(target).bib $(pdf_targets)
 
 pdf_target = $(addsuffix .pdf, $(target))
@@ -134,9 +135,9 @@ DVIPDFM_SPECIAL = 'pdf:.*docinfo'
 
 %.dvi: %.tex $(tex_deps)
 	@echo "====> LaTeX first pass"
-	$(call latex,$<) || cat $*.log 
+	$(call latex,$<) || cat $*.log
 	@if egrep -q $(RERUNBIB) $*.log ; then echo "====> BibTex" && $(call bibtex,$*) && echo "====> LaTeX BibTeX pass" && $(call latex, $<) ; fi
-	@if egrep -q $(RERUN) $*.log ; then echo "====> LaTeX rerun" && $(call latex,$<); fi; 
+	@if egrep -q $(RERUN) $*.log ; then echo "====> LaTeX rerun" && $(call latex,$<); fi;
 	@if egrep -q $(RERUN) $*.log ; then echo "====> LaTeX rerun" && $(call latex,$<); fi
 	@echo "====> Undefined references and citations:"
 	@egrep -i $(UNDEFINED) $*.log || echo "None."

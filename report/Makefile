@@ -65,7 +65,7 @@ help:
 	@echo
 
 clean = $(target) $(optional)
-tex_deps = abstract.tex background.tex conclusion.tex attack-drk.tex
+tex_deps = abstract.tex introduction.tex background.tex conclusion.tex attack-drk.tex mitigation-kpti.tex
 
 ##############################################################################
 ifeq ($(wildcard .git),.git)
@@ -105,9 +105,9 @@ DVIPDFM_SPECIAL = 'pdf:.*docinfo'
 
 %.pdf: %.tex $(pdf_targets) $(tex_deps)
 	@echo "====> LaTeX first pass"
-	$(call pdflatex,$<) || cat $*.log 
+	$(call pdflatex,$<) || cat $*.log
 	@if egrep -q $(RERUNBIB) $*.log ; then echo "====> BibTex" && $(call bibtex,$*) && echo "====> LaTeX BibTeX pass" && $(call pdflatex, $<) ; fi
-	@if egrep -q $(RERUN) $*.log ; then echo "====> LaTeX rerun" && $(call pdflatex,$<); fi; 
+	@if egrep -q $(RERUN) $*.log ; then echo "====> LaTeX rerun" && $(call pdflatex,$<); fi;
 	@if egrep -q $(RERUN) $*.log ; then echo "====> LaTeX rerun" && $(call pdflatex,$<); fi;
 	@echo "====> Undefined references and citations:"
 	@egrep -i $(UNDEFINED) $*.log || echo "None."

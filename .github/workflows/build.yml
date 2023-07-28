@@ -95,10 +95,15 @@ jobs:
     needs: [build-slides, build-report]
     runs-on: ubuntu-latest
     steps:
-      - name: Download artifact
+      - name: Download slides artifact
         uses: actions/download-artifact@v3
         with:
-          name: PDF
+          name: Slides PDF
+          path: output
+      - name: Download report artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: Report PDF
           path: output
       - name: Create Release
         uses: softprops/action-gh-release@v1

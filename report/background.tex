@@ -46,7 +46,7 @@ Examples of such rules are an inherent ordering of pages inside a region (module
 
 With each allocation the entropy for future allocations shrinks as the region is filled up and may rules apply.
 
-\subsection{Introduction into modern operating systems}
+\subsection{Introduction into modern OSes}
 
 \begin{table}[!ht]
     \small
@@ -54,16 +54,36 @@ With each allocation the entropy for future allocations shrinks as the region is
     \begin{tabular}{llrr}
     \hline
         \textbf{OS} & \textbf{Release} & \textbf{(K)ASLR} & \textbf{Date} \\ \hline
-        macOS & ~ & ASLR & October 2007 \\ 
-        macOS & ~ & KASLR & July 2012 \\ 
-        Linux & 2.6.12 & ASLR & June 2005 \\ 
-        Linux & 3.14 & KASLR & March 2014 \\ 
-        Windows & Vista & ASLR & January 2007 \\ 
-        Windows & Vista & KASLR & January 2007 \\ \hline
+        \multirow{2}{*}{macOS}   & OS X 10.5              &  ASLR & October 2007 \\ 
+                                 & OS X 10.8              & KASLR & July 2012    \\ \\
+        \multirow{2}{*}{Linux}   & 2.6.12                 &  ASLR & June 2005    \\ 
+                                 & 3.14                   & KASLR & March 2014   \\ \\
+        \multirow{2}{*}{Windows} & \multirow{2}{*}{Vista} &  ASLR & \multirow{2}{*}{January 2007} \\
+                                 &                        & KASLR & \\ \hline
     \end{tabular}
+    \caption{ASLR and KASLR introduction dates into major operating systems}
 \end{table}
 
 Windows, Linux and macOS all introduced ASLR and KASLR in the timeframe from 2005 until 2014.
 Linux (Kernel 2.6.12) and macOS (Mac OS X Leopard 10.5) both added support for ASLR in 2005.
 In 2007 Windows Vista added support for both ASLR and KASLR at the same time. The early implementation of ASLR in Windows Vista was however not the most refined, as the effectiveness on 32-bit systems could be reduced when the system was low on memory.
 MacOS implemented KASLR in 2012 with OS X Mountain Lion 10.8.
+
+\subsection{Implementation differences}
+
+When it comes to the implementations of ASLR and KASLR there are some stark differences between the three major desktop operating systems (Windows, Linux and macOS).
+
+\begin{table*}[!ht]
+  \small
+  \centering
+  \begin{tabular}{llcrrr}
+  \hline
+    \textbf{OS} & \textbf{Type} & \textbf{Address Range} & \textbf{Page Size} & \textbf{Slots} & \textbf{Entropy} \\ \hline
+    \multirow{2}{*}{Linux}   & Kernel  & {\lstinline[basicstyle=\ttfamily]![0xffffffff80000000, 0xffffffffc0000000]!} & 16MB &   64 &  6 bits \\
+                             & Modules & {\lstinline[basicstyle=\ttfamily]![0xffffffffc0000000, 0xffffffffc0400000]!} &  4KB & 1024 & 10 bits \\ \\
+    \multirow{2}{*}{Windows} & Kernel  & {\lstinline[basicstyle=\ttfamily]![0xfffff80000000000, 0xfffff80400000000]!} &  2MB & 8192 & 13 bits \\
+                             & Modules & {\lstinline[basicstyle=\ttfamily]![0xfffff80000000000, 0xfffff80400000000]!} &  2MB & 8192 & 13 bits \\ \\
+    macOS   & Kernel  & {\lstinline[basicstyle=\ttfamily]![0xffffff8000000000, 0xffffff8020000000]!} &  2MB &  256 &  8 bits \\ \hline
+  \end{tabular}
+  \caption{Differences in allocation categorized by operating system}
+\end{table*}

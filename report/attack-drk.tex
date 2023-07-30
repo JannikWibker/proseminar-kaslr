@@ -167,3 +167,26 @@ Accesses which take more than 235 cycles are considered to be unmapped.
 For all pages considered to be mapped an additional check for their execution status is performed.
 If jumping to the address takes less than 200 cycles the page is considered executable.
 More than 220 cycles is considered non-executable.
+
+\subsection{Determining kernel and module mappings}
+
+With the previous steps the status of a page can be inferred.
+This however doesn't tell anything about what this page is actually being used for.
+In many cases extra information such as the precise kernel location or the location of a specific module is required.
+Thus a further step is necessary.
+
+The general approach is to associate each known module as well as the kernel itself with a signature and then search the pool of pages for these signatures.
+It is to be noted that a module or the kernel itself consists not only of a single page but multiple.
+
+For this operating system specific rules and ranges for page allocation can be used to guess which page corresponds to which module or kernel region.
+
+\subsubsection{Linux}
+
+The address ranges into which the kernel and the modules are mapped are different and don't overlap.
+It is therefore easy to tell kernel and module pages apart.
+The kernel is located in the range \lstinline{[0xffffffff80000000, 0xffffffffc0000000)}.
+Modules are mapped in the range \lstinline{[0xffffffffc0000000, 0xffffffffc0400000]}, thus directly following the address range of the kernel.
+
+Similar to the kernel each module is also mapped as a continoues range of pages, but there is a gap comprised of empty pages in between each module's pages.
+Knowing the amount modules and their sizes makes it possible to uniquely identify some of the modules \cite{drk}.
+

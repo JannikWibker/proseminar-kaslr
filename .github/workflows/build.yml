@@ -1,4 +1,4 @@
-name: Build slides and report, create artifacts and release on tag
+name: Build, Artifact and Release
 
 on: push
 

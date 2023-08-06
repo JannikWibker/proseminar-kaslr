@@ -1,1 +1,19 @@
-KPTI
+A mitigation against many KASLR derandomization attacks is called \textit{Kernel Page Table Isolation} (\textit{KPTI}).
+The concept was initially introduced under the name KAISER (\textit{Kernel Address Isolation to have Side-channels Efficiently Removed}) by D. Gruss et al. in \cite{kaiser}.
+Originally \textit{KAISER} was implemented as a patch for the Linux kernel and demoed on Ubuntu 16.10.
+It was later adapted by the Linux kernel developers and merged into the mainline kernel (4.15) under the name KPTI.
+
+\subsection{The Problem}
+
+The main cause for many KASLR derandomization attacks is improper information leakage after an illegal operation was performed or attempted to be performed by the CPU and not properly rolled back (i.e. caches not being cleared correctly, or timing differences in exception handling, page table traversals and memory accesses).
+What all of these attacks rely on is that this initial information is accessed by the CPU and not properly guarded.
+If this initial code path leading to the access could be avoided almost all attacks would be rendered unfunctional.
+
+In this case that would mean not mapping the kernel address space into userspace at all and vice-versa, which has been proposed by multiple papers before (Gruss et al. \cite{prefetch-side-channel-smap} and Jang et al. \cite{drk}).
+
+This is a very drastic and brute-force measure which would impact many things such as multithreaded applications or even contexts switches in general making some use cases practically impossible.
+Multithreaded applications share the same address space per thread and thus switching to the kernel-only address space would break parallel execution of threads as the user address space would not be accessible anymore.
+This would also incur a lot of TLB flushes as the address space would have to be completely switched with every syscall.
+
+Thus a less intrusive approach is needed.
+

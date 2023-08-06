@@ -128,6 +128,24 @@
   booktitle = {Engineering Secure Software and Systems}
 }
 
+@misc{echoload,
+  author = {Canella, Claudio and Schwarz, Michael and Haubenwallner, Martin and Schwarzl, Martin and Gruss, Daniel},
+  title = {KASLR: Break It, Fix It, Repeat},
+  year = {2020},
+  isbn = {9781450367509},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  howpublished = {\url{https://doi.org/10.1145/3320269.3384747}},
+  doi = {10.1145/3320269.3384747},
+  abstract = {In this paper, we analyze the hardware-based Meltdown mitigations in recent Intel microarchitectures, revealing that illegally accessed data is only zeroed out. Hence, while non-present loads stall the CPU, illegal loads are still executed. We present EchoLoad, a novel technique to distinguish load stalls from transiently executed loads. EchoLoad allows detecting physically-backed addresses from unprivileged applications, breaking KASLR in 40's on the newest Meltdown- and MDS-resistant Cascade Lake microarchitecture. As EchoLoad only relies on memory loads, it runs in highly-restricted environments, e.g., SGX or JavaScript, making it the first JavaScript-based KASLR break. Based on EchoLoad, we demonstrate the first proof-of-concept Meltdown attack from JavaScript on systems that are still broadly not patched against Meltdown, i.e., 32-bit x86 OSs. We propose FLARE, a generic mitigation against known microarchitectural KASLR breaks with negligible overhead. By mapping unused kernel addresses to a reserved page and mirroring neighboring permission bits, we make used and unused kernel memory indistinguishable, i.e., a uniform behavior across the entire kernel address space, mitigating the root cause behind microarchitectural KASLR breaks. With incomplete hardware mitigations, we propose to deploy FLARE even on recent CPUs.},
+  booktitle = {Proceedings of the 15th ACM Asia Conference on Computer and Communications Security},
+  pages = {481–493},
+  numpages = {13},
+  keywords = {side-channel attack, KASLR, transient execution, meltdown, countermeasure, reverse engineering},
+  location = {Taipei, Taiwan},
+  series = {ASIA CCS '20}
+}
+
 @misc{meltdown,
   author = {Lipp, Moritz and Schwarz, Michael and Gruss, Daniel and Prescher, Thomas and Haas, Werner and Fogh, Anders and Horn, Jann and Mangard, Stefan and Kocher, Paul and Genkin, Daniel and Yarom, Yuval and Hamburg, Mike},
   title = {Meltdown: Reading Kernel Memory from User Space},
@@ -147,4 +165,22 @@
   author = {Intel},
   title = {Intel® Transactional Synchronization Extensions (Intel® TSX) Overview},
   howpublished = {\url{https://www.intel.com/content/www/us/en/docs/cpp-compiler/developer-guide-reference/2021-8/tsx-programming-considerations-ov.html}}
+}
+
+@inproceedings{prefetch-side-channel-smap,
+  author = {Gruss, Daniel and Maurice, Cl\'{e}mentine and Fogh, Anders and Lipp, Moritz and Mangard, Stefan},
+  title = {Prefetch Side-Channel Attacks: Bypassing SMAP and Kernel ASLR},
+  year = {2016},
+  isbn = {9781450341394},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  howpublished = {\url{https://gruss.cc/files/prefetch.pdf}},
+  doi = {10.1145/2976749.2978356},
+  abstract = {Modern operating systems use hardware support to protect against control-flow hijacking attacks such as code-injection attacks. Typically, write access to executable pages is prevented and kernel mode execution is restricted to kernel code pages only. However, current CPUs provide no protection against code-reuse attacks like ROP. ASLR is used to prevent these attacks by making all addresses unpredictable for an attacker. Hence, the kernel security relies fundamentally on preventing access to address information. We introduce Prefetch Side-Channel Attacks, a new class of generic attacks exploiting major weaknesses in prefetch instructions. This allows unprivileged attackers to obtain address information and thus compromise the entire system by defeating SMAP, SMEP, and kernel ASLR. Prefetch can fetch inaccessible privileged memory into various caches on Intel x86. It also leaks the translation-level for virtual addresses on both Intel x86 and ARMv8-A. We build three attacks exploiting these properties. Our first attack retrieves an exact image of the full paging hierarchy of a process, defeating both user space and kernel space ASLR. Our second attack resolves virtual to physical addresses to bypass SMAP on 64-bit Linux systems, enabling ret2dir attacks. We demonstrate this from unprivileged user programs on Linux and inside Amazon EC2 virtual machines. Finally, we demonstrate how to defeat kernel ASLR on Windows 10, enabling ROP attacks on kernel and driver binary code. We propose a new form of strong kernel isolation to protect commodity systems incuring an overhead of only 0.06-5.09\%.},
+  booktitle = {Proceedings of the 2016 ACM SIGSAC Conference on Computer and Communications Security},
+  pages = {368-379},
+  numpages = {12},
+  keywords = {ASLR, kernel vulnerabilities, timing attacks},
+  location = {Vienna, Austria},
+  series = {CCS '16}
 }

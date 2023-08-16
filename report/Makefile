@@ -65,7 +65,7 @@ help:
 	@echo
 
 clean = $(target) $(optional)
-tex_deps = abstract.tex introduction.tex background.tex conclusion.tex attack-drk.tex mitigation-kpti.tex
+tex_deps = abstract.tex introduction.tex background.tex conclusion.tex attack-drk.tex mitigation-kpti.tex related-work.tex
 
 ##############################################################################
 ifeq ($(wildcard .git),.git)

@@ -8,12 +8,12 @@ The address space of a user space program will typically contain the following:
   \item The kernel address space
 \end{itemize}
 
-When not using ASLR and KASLR the placement of pages is deterministic and the same each time the program executes assuming no outside factors have changed since and the flow through the application hasn't differed.
+When not using ASLR and KASLR the placement of pages is deterministic and the same each time the program executes assuming no outside factors have changed since and the flow through the application has not differed.
 This means that attackers can easily guess where a specific page will be allocated to in the virtual address space of the process, especially when this allocation is a dynamic library or happens shortly after startup.
-To combat this Address Space Layout Randomization was introduced, which randomizes the address where a page is placed at.
-ASLR is done at runtime resulting in the memory layout differing with each execution of the program.
-As the kernel is mapped into the address space of every process it does not change its layout when ASLR is enabled.
-Libc and dynamical libraries are a common target used in exploits of which the addresses are most commonly required for the exploit to function, with ASLR this is made harder.
+To combat this, Address Space Layout Randomization was introduced, which randomizes the address where a page is placed at.
+ASLR is done at runtime, resulting in the memory layout differing with each execution of the program.
+As the kernel is mapped into the address space of every process, it does not change its layout when ASLR is enabled.
+Libc and dynamical libraries are a common target used in exploits of which the addresses are most commonly required for the exploit to function. With ASLR this is made harder.
 
 For ASLR to function the executables have to be position independent, meaning that the program works with any base address and does not rely on specific addresses of libraries or pages to function.
 These executables are called Position Independent Executables (or PIE for short).
@@ -22,7 +22,7 @@ The code of such executable is also referred to as Position Independent Code.
 \subsection{Kernel Address Space Layout Randomization}
 
 The kernel is mapped into the address space of every process in order to speed up system calls by reducing the amount of context switches required.
-Without the kernel address space being copied into user space every system call would require a context switch to the kernel address space and back incurring a lot of \textbf{T}ranslation \textbf{L}ookaside \textbf{B}uffer (TLB) flushes.
+Without the kernel address space being mapped into user space every system call would require a context switch to the kernel address space and back incurring a lot of \textbf{T}ranslation \textbf{L}ookaside \textbf{B}uffer (TLB) flushes.
 
 With Kernel Address Space Layout Randomization the previous shortcoming of ASLR is addressed.
 The addresses to where the kernel and its modules or drivers are mapped are randomized at boot time.
@@ -46,7 +46,7 @@ Examples of such rules are an inherent ordering of pages inside a region (module
 
 With each allocation the entropy for future allocations shrinks as the region is filled up and may rules apply.
 
-\subsection{Introduction into modern OSes}
+\subsection{Introduction To Modern OSes}
 
 \begin{table}[!ht]
     \small

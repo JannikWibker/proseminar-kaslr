@@ -1,5 +1,5 @@
 The DrK is an attack against KASLR which derandomizes the kernel address space.
-It has been proposed in the paper \textit{Breaking Kernel Address Space Layout Randomization with Intel TSX} by \textit{Jang, Yeongjin and Lee, Sangho and Kim, Taesoo} \cite{drk}
+It has been proposed in the paper \textit{Breaking Kernel Address Space Layout Randomization with Intel TSX} by \textit{Jang, Yeongjin and Lee, Sangho and Kim, Taesoo} \cite{drk}.
 Most of the code necessary to perform the attack can be found on \href{https://github.com/sslab-gatech/DrK}{GitHub} \cite{drk-attack-proof-of-concept-github}.
 
 The attack builds upon Intel TSX and performs a timing attack to infer the state of a page (mapped vs. unmapped and executable vs. non-executable).
@@ -37,7 +37,7 @@ if (_xbegin() == _XBEGIN_STARTED) {
 }
 \end{lstlisting}
 
-The exception being directly handled by an abort handler in userspace is far from the norm, otherwise this will always notify the kernel which can then decide to terminate the process or take some other kind of action.
+The exception being directly handled by an abort handler in userspace is far from the norm. Otherwise this will always notify the kernel which can then decide to terminate the process or take some other kind of action.
 With TSX this is not possible as the kernel does not ever get notified of this exception occuring.
 This can pose great potential for abuse if used in a nefarious manner as this behavior differs from the status quo and assumptions used elsewhere might not hold with this.
 Mechanisms which otherwise rely on the kernel getting notified about page faults such as Demand Paging will not work correctly.
@@ -152,7 +152,7 @@ Testing with known mapped pages, executable pages as well as unmapped and non-ex
 \end{figure}
 
 Very clear-cut groupings can be observed, using those a categorization into (M)apped vs (U)nmapped and Executable (X) and Non-Executable (NX) can be done.
-These values are dependent on the CPU being used, different hardware will have different timing thresholds.
+These values are dependent on the CPU being used. Different hardware will have different timing thresholds.
 
 \begin{figure}[h]
   \begin{center}
@@ -171,7 +171,7 @@ More than 220 cycles is considered non-executable.
 \subsection{Determining kernel and module mappings}
 
 With the previous steps the status of a page can be inferred.
-This however doesn't tell anything about what this page is actually being used for.
+This however does not tell anything about what this page is actually being used for.
 In many cases extra information such as the precise kernel location or the location of a specific module is required.
 Thus a further step is necessary.
 
@@ -182,13 +182,13 @@ For this operating system specific rules and ranges for page allocation can be u
 
 \subsubsection{Linux}
 
-The address ranges into which the kernel and the modules are mapped are different and don't overlap.
+The address ranges into which the kernel and the modules are mapped are different and do not overlap.
 It is therefore easy to tell kernel and module pages apart.
 The kernel is located in the range \lstinline{[0xffffffff80000000, 0xffffffffc0000000)}.
 Modules are mapped in the range \lstinline{[0xffffffffc0000000, 0xffffffffc0400000]}, thus directly following the address range of the kernel.
 
 Similar to the kernel each module is also mapped as a continoues range of pages, but there is a gap comprised of empty pages in between each module's pages.
-Knowing the amount modules and their sizes makes it possible to uniquely identify some of the modules \cite{drk}.
+Knowing the amount of modules and their sizes makes it possible to uniquely identify some of the modules \cite{drk}.
 
 \subsubsection{Windows}
 

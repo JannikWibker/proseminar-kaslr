@@ -7,17 +7,45 @@ It was later adapted by the Linux kernel developers and merged into the mainline
 
 The main cause for many KASLR derandomization attacks is improper information leakage after an illegal operation was performed or attempted to be performed by the CPU and not properly rolled back (i.e. caches not being cleared correctly, or timing differences in exception handling, page table traversals and memory accesses).
 What all of these attacks rely on is that this initial information is accessed by the CPU and not properly guarded.
-If this initial code path leading to the access could be avoided almost all attacks would be rendered unfunctional.
+If this initial code path leading to the access could be avoided almost all attacks would be rendered unfunctional. \cite{kaiser}
 
 In this case that would mean not mapping the kernel address space into userspace at all and vice-versa, which has been proposed by multiple papers before (Gruss et al. \cite{prefetch-side-channel-smap} and Jang et al. \cite{drk}).
 
 This is a very drastic and brute-force measure which would impact many things such as multithreaded applications or even contexts switches in general making some use cases practically impossible.
 Multithreaded applications share the same address space per thread and thus switching to the kernel-only address space would break parallel execution of threads as the user address space would not be accessible anymore.
-This would also incur a lot of TLB flushes as the address space would have to be completely switched with every syscall.
+This would also incur a lot of TLB flushes as the address space would have to be completely switched with every syscall.\cite{kaiser}
 
 Thus a less intrusive approach is needed.
 
+\subsection{The Challenges to overcome}
+
+\textit{D. Gruss et al.} \cite{kaiser} identifies three major challenges that have to be overcome or accomodated for in order for a solution to be viable.
+
+\begin{itemize}
+  \item{
+    \textbf{Multithreading}:
+    Threads share the same address space.
+    Thus when a thread enters kernel mode and switches to a kernel-exclusive address space all other threads would switch to the same address space as well, partially defeating the original goal of the mitigation.
+    A context switch would also mean having to synchronize all threads.
+  }
+  \item{
+    \textbf{Implicitely assumed and required mappings}:
+    Assumptions about the presence of user space mappings being present when in kernel mode and vice-versa are made in many places in the linux kernel.
+    These assumptions are often implicit and not easy to spot.
+    The architecture of x86 processors requires that a few mappings are present at all times (i.e. when in user space and when in kernel space).
+    Changes would have to be made to the kernel at large to accomodate for this, requiring a significant chunk of work.
+  }
+  \item{
+    \textbf{Amount and impact of TLB flushes}:
+    Switching the address space incurs an implicit full TLB flush and modifying the address space causes a partial TLB flush. \cite{the-ginormous-intel-manual-volume-3}
+  }
+\end{itemize}
+
 \subsection{The Approach}
+
+The solution to the given problem by \textit{KAISER} deals with the above challenges.
+
+
 
 \textbf{TODO}
 

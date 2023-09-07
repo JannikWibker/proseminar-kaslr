@@ -111,13 +111,13 @@
 
 @misc{drk-attack-proof-of-concept-github,
   author = {Yeongjin Jang, Sangho Lee and Taesoo Kim},
-  title = {The DrK Attack - Proof of concept},
+  title = {{The DrK Attack - Proof of concept}},
   howpublished = {\url{https://github.com/sslab-gatech/DrK}}
 }
 
 @misc{kaiser,
   author = {Daniel Gruss and Moritz Lipp and Michael Schwarz and Richard Fellner and Clémentine Maurice and Stefan Mangard},
-  title = {KASLR is Dead: Long Live KASLR},
+  title = {{KASLR is Dead: Long Live KASLR}},
   year = {2017},
   month = {06},
   pages = {161-176},
@@ -130,7 +130,7 @@
 
 @misc{echoload,
   author = {Canella, Claudio and Schwarz, Michael and Haubenwallner, Martin and Schwarzl, Martin and Gruss, Daniel},
-  title = {KASLR: Break It, Fix It, Repeat},
+  title = {{KASLR: Break It, Fix It, Repeat}},
   year = {2020},
   isbn = {9781450367509},
   publisher = {Association for Computing Machinery},
@@ -139,7 +139,7 @@
   doi = {10.1145/3320269.3384747},
   abstract = {In this paper, we analyze the hardware-based Meltdown mitigations in recent Intel microarchitectures, revealing that illegally accessed data is only zeroed out. Hence, while non-present loads stall the CPU, illegal loads are still executed. We present EchoLoad, a novel technique to distinguish load stalls from transiently executed loads. EchoLoad allows detecting physically-backed addresses from unprivileged applications, breaking KASLR in 40's on the newest Meltdown- and MDS-resistant Cascade Lake microarchitecture. As EchoLoad only relies on memory loads, it runs in highly-restricted environments, e.g., SGX or JavaScript, making it the first JavaScript-based KASLR break. Based on EchoLoad, we demonstrate the first proof-of-concept Meltdown attack from JavaScript on systems that are still broadly not patched against Meltdown, i.e., 32-bit x86 OSs. We propose FLARE, a generic mitigation against known microarchitectural KASLR breaks with negligible overhead. By mapping unused kernel addresses to a reserved page and mirroring neighboring permission bits, we make used and unused kernel memory indistinguishable, i.e., a uniform behavior across the entire kernel address space, mitigating the root cause behind microarchitectural KASLR breaks. With incomplete hardware mitigations, we propose to deploy FLARE even on recent CPUs.},
   booktitle = {Proceedings of the 15th ACM Asia Conference on Computer and Communications Security},
-  pages = {481–493},
+  pages = {481-493},
   numpages = {13},
   keywords = {side-channel attack, KASLR, transient execution, meltdown, countermeasure, reverse engineering},
   location = {Taipei, Taiwan},
@@ -148,7 +148,7 @@
 
 @misc{meltdown,
   author = {Lipp, Moritz and Schwarz, Michael and Gruss, Daniel and Prescher, Thomas and Haas, Werner and Fogh, Anders and Horn, Jann and Mangard, Stefan and Kocher, Paul and Genkin, Daniel and Yarom, Yuval and Hamburg, Mike},
-  title = {Meltdown: Reading Kernel Memory from User Space},
+  title = {{Meltdown: Reading Kernel Memory from User Space}},
   year = {2018},
   isbn = {9781931971461},
   doi = {10.5555/3277203.3277276},
@@ -163,13 +163,19 @@
 
 @misc{intel-tsx-overview,
   author = {Intel},
-  title = {Intel® Transactional Synchronization Extensions (Intel® TSX) Overview},
+  title = {{Intel® Transactional Synchronization Extensions (Intel® TSX) Overview}},
   howpublished = {\url{https://www.intel.com/content/www/us/en/docs/cpp-compiler/developer-guide-reference/2021-8/tsx-programming-considerations-ov.html}}
+}
+
+@misc{the-ginormous-intel-manual-volume-3,
+  author = {Intel},
+  title = {{Intel® 64 and IA-32 Architectures Software Developer's Manual, Volume 3}},
+  howpublished = {\url{https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html}}
 }
 
 @inproceedings{prefetch-side-channel-smap,
   author = {Gruss, Daniel and Maurice, Cl\'{e}mentine and Fogh, Anders and Lipp, Moritz and Mangard, Stefan},
-  title = {Prefetch Side-Channel Attacks: Bypassing SMAP and Kernel ASLR},
+  title = {{Prefetch Side-Channel Attacks: Bypassing SMAP and Kernel ASLR}},
   year = {2016},
   isbn = {9781450341394},
   publisher = {Association for Computing Machinery},

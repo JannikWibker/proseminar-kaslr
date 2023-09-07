@@ -1,1 +1,13 @@
-Introduction
+KASLR and ASLR both randomize the locations of allocations in an address space.
+The main difference is that with ASLR only the userspace of a process is randomized and not the kernel memory that is mapped into every address space.
+KASLR adds upon this by randomizing the kernel memory as well.
+The kernel address space contains not only the kernel code itself but also kernel data structures and kernel modules.
+Possible ranges for each of these categories of allocations differ between operating systems and in their effectiveness against guessing or inferring their locations.
+
+DrK abuses the fact that Intel TSX (Intel Transactional Synchronization Extension \cite{intel-tsx-overview}) does not notify the kernel of page faults and access violations but rather solely the exception handler of the transaction in user space.
+Using this DrK can do a timing-based attack and scan the address space for allocated pages and obtain whether a page is executable or not if mapped.
+From this the addresses of the kernel as well as its modules can be inferred with high accuracy.
+If the kernel were to be able to detect the memory scanning behaviour or similary unusual behaviours of the process it could terminate it.
+Due to the nature of TSX not notifying the kernel this is not possible, thus making DrK hard to detect with this type of mitigation attempt.
+
+KPTI mitigates this by reducing the footprint of the kernel in user space and thus reducing the amount of information that can be obtained by DrK, Meltdown and similar attacks.

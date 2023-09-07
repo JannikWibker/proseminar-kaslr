@@ -1,6 +1,3 @@
 KASLR (Kernel Address Space Layout Randomization) and ASLR (Address Space Layout Randomization) are both important measures to strengthen the security of operating systems.
 They are however not without flaws and can be circumvented.
 In this report I will give an overview of the state of KASLR, its origins and differences in implementation across different operating systems, detail an attack against KASLR called DrK introduced by Jang et al. \cite{drk} and touch on KPTI (previously KAISER by Gruss et al. \cite{kaiser}), which is a later introduced mitigation for said attack and multiple others such as Meltdown \cite{meltdown}.
-DrK abuses the fact that Intel TSX (Intel Transactional Synchronization Extension \cite{intel-tsx-overview}) does not notify the kernel of page faults and access violations but rather solely the exception handler of the transaction in user space. Using this DrK can do a timing-based attack and scan the address space for allocated pages and obtain whether a page is executable or not if mapped.
-From this the addresses of the kernel as well as its modules can be inferred with high accuracy.
-KPTI mitigates this by reducing the footprint of the kernel in user space and thus reducing the amount of information that can be obtained by DrK, Meltdown and similar attacks.

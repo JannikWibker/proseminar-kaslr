@@ -4,11 +4,13 @@ KASLR adds upon this by randomizing the kernel memory as well.
 The kernel address space contains not only the kernel code itself but also kernel data structures, kernel stack and kernel modules.
 Possible ranges for each of these categories of allocations differ between operating systems and in their effectiveness against guessing or inferring their locations \cite{drk}.
 
-DrK abuses the fact that Intel TSX (Intel Transactional Synchronization Extension \cite{intel-tsx-overview}) does not notify the kernel of page faults and access violations but rather solely the exception handler of the transaction in user space.
+DrK abuses the fact that \textit{Intel TSX} (Intel Transactional Synchronization Extension \cite{intel-tsx-overview}) does not notify the kernel of page faults and access violations but rather solely the exception handler of the transaction in user space.
 Using this DrK can do a timing-based attack and scan the address space for allocated pages and obtain whether a page is executable or not if mapped.
 From this the addresses of the kernel as well as its modules can be inferred with high accuracy \cite{drk}.
 
 If the kernel were to be able to detect the memory scanning behaviour or similary unusual behaviours of the process it could terminate it.
 Due to the nature of TSX not notifying the kernel this is not possible, thus making DrK hard to detect with this type of mitigation attempt.
 
-KPTI mitigates this by reducing the footprint of the kernel in user space and thus reducing the amount of information that can be obtained by DrK, Meltdown and similar attacks.
+KPTI mitigates this by drastically reducing the footprint of the kernel mapped in user space and thus reducing the amount of information that can be obtained by DrK, Meltdown and similar attacks, as these rely on the page table knowing more locations than are accessible by the user.
+Instead of having only one address space it is split into the shadow address space and the kernel address space into which the user space is mapped using \textit{SMAP} and \textit{SMEP} (Supervisor Mode Access and Execution Prevention).
+User space operation occurs in the shadow address space but when required the address space is switched to the kernel address space for performing syscalls.\cite{kaiser}

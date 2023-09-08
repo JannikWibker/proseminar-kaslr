@@ -4,7 +4,7 @@ Most of the code necessary to perform the attack can be found on \href{https://g
 
 The attack builds upon Intel TSX and performs a timing attack to infer the state of a page (mapped vs. unmapped and executable vs. non-executable).
 This works because with TSX the kernel does not get notified of Page Faults and Access Violations, but the abort handler itself is.
-Furthermore the time it takes the MMU (Memory Managment Unit) to throw a Page Fault exception slightly differs from the time it takes to throw an Access Violation exception.
+Furthermore the time it takes the \textit{MMU} (Memory Managment Unit) to throw a Page Fault exception slightly differs from the time it takes to throw an Access Violation exception.
 Using this the status of a page can be inferred.
 
 \subsection{Intel TSX}

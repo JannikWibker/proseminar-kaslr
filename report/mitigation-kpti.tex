@@ -45,7 +45,25 @@ Thus a less intrusive approach is needed.
 
 The solution to the given problem by \textit{KAISER} deals with the above challenges.
 
+Split the address space into two parts. First the \textit{Shadow address space} which contains all allocations done in userspace and what is otherwise typically associated with the user space.
+Second the \textit{Kernel address space} which contains the kernel code, kernel data and kernel modules.
+The kernel address space also has a complete mapping of the user mode space, which is however protected by \textit{SMAP} and \textit{SMEP}.
+A few pages are present in both address spaces which are strictly required for the OS to function properly such as the system call trampoline and interrupt descriptor table (\textit{IDT}).
 
+\textit{SMAP} and \textit{SMEP} stand for \textit{Supervisor Mode Access Prevention} and \textit{Supervisor Mode Execution Prevention} respectively.
+The MMU restricts accesses originating from the kernel to user-accessible memory.
+This is to prevent the kernel from unintentionally executing (or writing to) user space memory.
+
+Whenever a system call occurs in user mode the address space is switched from the shadow address space to the kernel address space.
+As each core has its own \textit{CR3}-register (the entrypoint to the currently active page table).
+Thus this behaviour solves the multithreading challenge as no two threads can be executed on the same core at the same time with one being in kernel mode while the other is not, which would lead to the same address space being used by both allowing for microarchitectural flaws to be exploited.
+
+To implement switching between the address spaces with as little overhead as possible there needs to be a way to distinguish between them and get the address of the respective other address space using only the \textit{CR3}-register and very little computation.
+This is done by enforcing a strict placement of the PML4 page table, which is the top-most and thus entrypoint to the page table hierarchy, such that a single bit encodes the address space in use.
+The 12th bit in the address is chosen for this purpose.
+A \lstinline{0} refers to the kernel address space and a \lstinline{1} to the shadow address space.
+Simple bit manipulation allows computing the address of the other address space and determining which address space is active.
+
+Memory overhead introduced by this is small: 8KB per thread, 12KB per process and 1 MB globally in the kernel.
 
 \textbf{TODO}
-

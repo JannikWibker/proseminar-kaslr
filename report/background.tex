@@ -22,12 +22,12 @@ The code of such executable is also referred to as Position Independent Code.
 \subsection{Kernel Address Space Layout Randomization}
 
 The kernel is mapped into the address space of every process in order to speed up system calls by reducing the amount of context switches required.
-Without the kernel address space being mapped into user space every system call would require a context switch to the kernel address space and back incurring a lot of \textbf{T}ranslation \textbf{L}ookaside \textbf{B}uffer (TLB) flushes.
+Without the kernel address space being mapped into user space every system call would require a context switch to the kernel address space and back incurring a lot of \textit{TLB} (\textbf{T}ranslation \textbf{L}ookaside \textbf{B}uffer) flushes.
 
 With Kernel Address Space Layout Randomization the previous shortcoming of ASLR is addressed.
 The addresses to where the kernel and its modules or drivers are mapped are randomized at boot time.
 With this the addresses of all pages might not differ each time a program is executed but each time the system is rebooted.
-As a main focus of many malwares is them being able to spread fast and wide it is paramount that the exploit can be reused across systems without having to be custom tailored to the system itself or even the kernel memory layout which is in use since last booting.
+As a main focus of many malwares is them being able to spread fast and wide, it is paramount that the exploit can be reused across systems without having to be custom tailored to the system itself or even the kernel memory layout which is in use since last booting.
 KASLR breaks this assuming it is not possible for the exploit to figure out the kernel memory layout.
 
 \subsection{Entropy}
@@ -37,14 +37,14 @@ These regions do differ in size across operating systems and versions thereof, a
 
 Oftentimes the measure of entropy is used to describe the effectiveness of ASLR and KASLR.
 Entropy describes the amount of bits of randomness available for a page allocation, i.e. the base 2 logarithm of the size of the region the page can be mapped into.
-The size of a region refers to the amount of pages that can possibly be mapped into that region meaning the size in bits divided by the page size in bits.
+The size of a region refers to the amount of pages that can possibly be mapped into it meaning the size in bits divided by the page size in bits.
 
 Higher entropy means that there are more possible addresses for a page to be mapped to.
 
 There can be certain rules in place which reduce the entropy for successive allocations,  thus the entropy is often given for the first allocation only where most rules don't apply yet.
 Examples of such rules are an inherent ordering of pages inside a region (module B must come after module A), requested alignment to multiples of the page size, or a minimum amount of empty pages in between each allocation.
 
-With each allocation the entropy for future allocations shrinks as the region is filled up and may rules apply.
+With each allocation the entropy for future allocations shrinks as the region is filled up and specific rules may apply.
 
 \subsection{Introduction to modern OSes}
 

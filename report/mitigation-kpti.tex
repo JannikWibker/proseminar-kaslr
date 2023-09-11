@@ -1,6 +1,6 @@
 A mitigation against many KASLR derandomization attacks is called \textit{Kernel Page Table Isolation} (\textit{KPTI}).
 The concept was initially introduced under the name KAISER (\textit{Kernel Address Isolation to have Side-channels Efficiently Removed}) by D. Gruss et al. in \cite{kaiser}.
-Originally \textit{KAISER} was implemented as a patch for the Linux kernel and demoed on Ubuntu 16.10.
+Originally \textit{KAISER} was implemented as a patch for the Linux kernel and demonstrated on Ubuntu 16.10.
 It was later adapted by the Linux kernel developers and merged into the mainline kernel (4.15) under the name KPTI.
 
 \subsection{The Problem}
@@ -48,6 +48,11 @@ The solution to the given problem by \textit{KAISER} deals with the above challe
 Split the address space into two parts. First the \textit{Shadow address space} which contains all allocations done in userspace and what is otherwise typically associated with the user space.
 Second the \textit{Kernel address space} which contains the kernel code, kernel data and kernel modules.
 The kernel address space also has a complete mapping of the user mode space, which is however protected by \textit{SMAP} and \textit{SMEP}.
+
+\textit{SMAP} and \textit{SMEP} stand for \textit{Supervisor Mode Access Prevention} and \textit{Supervisor Mode Execution Prevention} respectively.
+The MMU restricts accesses originating from the kernel to user-accessible memory.
+This is to prevent the kernel from unintentionally executing (or writing to) user space memory.\cite{smap}
+
 A few pages are present in both address spaces which are strictly required for the OS to function properly such as the system call trampoline and interrupt descriptor table (\textit{IDT}).
 
 \begin{figure}[h]
@@ -58,12 +63,8 @@ A few pages are present in both address spaces which are strictly required for t
   \label{fig:shadow_address_space}
 \end{figure}
 
-\textit{SMAP} and \textit{SMEP} stand for \textit{Supervisor Mode Access Prevention} and \textit{Supervisor Mode Execution Prevention} respectively.
-The MMU restricts accesses originating from the kernel to user-accessible memory.
-This is to prevent the kernel from unintentionally executing (or writing to) user space memory.\cite{smap}
-
 Whenever a system call occurs in user mode the address space is switched from the shadow address space to the kernel address space.
-As each core has its own \textit{CR3}-register (the entrypoint to the currently active page table).
+As each core has its own \textit{CR3}-register (the entrypoint to the currently active page table) no two threads can be executed at the same time and inadvertendly change one anothers address space.
 Thus this behaviour solves the multithreading challenge as no two threads can be executed on the same core at the same time with one being in kernel mode while the other is not, which would lead to the same address space being used by both allowing for microarchitectural flaws to be exploited.
 
 To implement switching between the address spaces with as little overhead as possible there needs to be a way to distinguish between them and get the address of the respective other address space using only the \textit{CR3}-register and very little computation.
@@ -82,4 +83,21 @@ Simple bit manipulation allows computing the address of the other address space 
 
 Memory overhead introduced by this is small: 8KB per thread, 12KB per process and 1 MB globally in the kernel.\cite{kaiser}
 
-\textbf{TODO}
+Quite a few pages are required to be mapped in both address spaces, unless a significant amount of reworking is done.
+The mapped pages include:
+
+\begin{itemize}
+  \item{\textit{Interrupt Descriptor Table} (IDT) and interrupt entry and exit \lstinline{.text} sections,}
+  \item{entire per-CPU memory sections including \textit{Interrupt Request Stack and Vector} (IRQ), \textit{Task State Segment} (TSS) and \textit{Global Descriptor Table} (GDT),}
+  \item{thread stacks as the CPU pushes registers on the current kernel stack which can either be a thread stack or an already saved per-CPU stack.}
+\end{itemize}
+
+x86 CPUs have the concept of global bits which indicate that a page mapping is global to every address space and thus does not need to be flushed with the rest of the TLB when switching address spaces.
+This however exposes these pages to side-channel attacks as they are the same kernel pages that were meant to be hidden from shadow address spaces.
+The Linux kernel uses global bits quite extensively to reduce the impact of TLB flushes as less pages are affected by a flush.
+Disabling global bits did however not incur a significant performance penalty as the evaluation of \textit{D. Gruss et al.} \cite{kaiser} shows.
+They suggest that CPUs likely already implement mechanisms to reduce the impact of TLB flushes such as tagging entries with their corresponding \lstinline{CR3}-register values and not flushing entries for frequently used \lstinline{CR3}-register values.
+This behaviour was first described by \textit{Venkatasubramanian et al.} \cite{tlb-management-framework}.
+In the end the performance impact of disabling global bits were negligible according to the testing of \textit{D. Gruss et al.} \cite{kaiser}.
+
+Thus all three challenges can be solved by this approach.

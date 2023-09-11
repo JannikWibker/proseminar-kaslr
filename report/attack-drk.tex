@@ -10,7 +10,7 @@ Using this the status of a page can be inferred.
 \subsection{Intel TSX}
 
 Intel TSX stands for the Intel Transaction Synchronization Extension(s) \cite{intel-tsx-overview}.
-It is an interface using which code can be run transactionally, i.e. segmented into clearly defined transactions, aborted and rolled back including all memory writes if so needed.
+It is an interface using which code can be run transactionally, i.e. segmented into clearly defined transactions, aborted and rolled back including all memory writes if so desired.
 
 Aborting and rolling back happens either manually using a directive to abort the transaction or automatically in the case of an exception such as a Page Fault.
 
@@ -50,7 +50,7 @@ Differentiating a Page Fault from an Access Violation will have to be done in so
 The time the MMU needs to generate a Page Fault for a given memory access differs from the time it takes to generate an Access Violation as the prior one can be deduced faster.
 This difference can be measured and used to tell both apart.
 
-Checking for execution status of the page works similarly.
+Checking for the execution status of the page works similarly.
 For a page that is known to be mapped (but inaccessible from userspace, meaning it belongs to the kernel address space) trying to jump to an address contained in the page will take a different amount of time until the exception is generated based on whether the page is executable or not.
 
 \subsection{Crafting the attack}
@@ -58,7 +58,7 @@ For a page that is known to be mapped (but inaccessible from userspace, meaning 
 Combining the previous leads to the following exploit implementation.
 
 By reading from a memory address a Page Fault will be generated if the page is unmapped and an Access Violation if the page is mapped but inaccessible from userspace.
-To achieve this inline assembly is used to move the value at the given address into a register, i.e. a very simple method to read from a concrete memory address.
+To achieve this, inline assembly is used to move the value at the given address into a register, i.e. a very simple method to read from a concrete memory address.
 
 This function will be called for each page and the timing results interpreted afterwards.
 

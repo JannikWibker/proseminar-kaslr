@@ -188,13 +188,22 @@ The kernel is located in the range \lstinline{[0xffffffff80000000, 0xffffffffc00
 Modules are mapped in the range \lstinline{[0xffffffffc0000000, 0xffffffffc0400000]}, thus directly following the address range of the kernel.
 
 Similar to the kernel each module is also mapped as a continoues range of pages, but there is a gap comprised of empty pages in between each module's pages.
-Knowing the amount of modules and their sizes makes it possible to uniquely identify some of the modules \cite{drk}.
+Knowing the amount of modules (exposed by \lstinline{lsmod}) and their sizes makes it possible to uniquely identify some of the modules \cite{drk}.
 
 \subsubsection{Windows}
+Unlike Linux Windows does not seperate the kernel and the modules into different address ranges.
+Both are mapped into the range \lstinline{[0xfffff80000000000, 0xfffff80400000000]}.
 
-\textbf{TODO}
+Windows sets execute permissions on kernel pages, has at most 6 kernel pages, each with a size of 2MB.
+Either the kernel comes before all drivers or after all drivers.
+
+Scanning for the kernel is done by looking for 6 consecutive pages with execute permissions.
+After that the location of the modules is either in front or behind the kernel.\cite{drk}
+
+Windows does however have one more trick up its sleeves: The starting position of the kernel is randomized within the page itself.
+Figuring out the page is not enough to correctly determine the location of functions or specific instructions.\cite{blog-windows-10-kaslr}
 
 \subsubsection{macOS}
 
-\textbf{TODO}
-
+The kernel is mapped in the range \lstinline{[0xffffff8000000000, 0xffffff8020000000]}.
+It can be found by looking for the first mapped page.

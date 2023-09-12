@@ -88,4 +88,12 @@ When it comes to the implementations of ASLR and KASLR there are some stark diff
   \caption{Differences in allocation categorized by operating system}
 \end{table*}
 
-\textbf{TODO: more details on the differences, similar to what is mentioned later in the report as well (Determining kernel and module mappings)}
+\textbf{Windows}: Windows has at most 6 pages (2MB each) for the kernel.
+The kernel and drivers share the same region of \lstinline{0xfffff80000000000} to \lstinline{0xfffff80400000000}.
+Drivers either all come before or after the kernel.
+
+\textbf{Linux}: The kernel is mapped as a continoues range of pages.
+The kernel and drivers are mapped in different regions (\lstinline{0xffffffff80000000} to \lstinline{0xffffffffc0000000} and \lstinline{0xffffffffc0000000} to \lstinline{0xffffffffc0400000} respectively).
+Inbetween each module there is at least one empty page.
+
+\textbf{macOS}: The kernel is mapped in the range \lstinline{[0xffffff8000000000, 0xffffff8020000000]}.

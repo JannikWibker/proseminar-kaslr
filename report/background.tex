@@ -61,13 +61,13 @@ With each allocation the entropy for future allocations shrinks as the region is
         \multirow{2}{*}{Windows} & \multirow{2}{*}{Vista} &  ASLR & \multirow{2}{*}{January 2007} \\
                                  &                        & KASLR & \\ \hline
     \end{tabular}
-    \caption{ASLR and KASLR introduction dates into major operating systems}
+    \caption{ASLR and KASLR introduction dates into major operating systems{\cite[Figure~1]{drk}}}
 \end{table}
 
 Windows, Linux and macOS all introduced ASLR and KASLR in the timeframe from 2005 until 2014.
 Linux (Kernel 2.6.12) and macOS (Mac OS X Leopard 10.5) both added support for ASLR in 2005.
 In 2007 Windows Vista added support for both ASLR and KASLR at the same time. The early implementation of ASLR in Windows Vista was however not the most refined, as the effectiveness on 32-bit systems could be reduced when the system was low on memory.
-MacOS implemented KASLR in 2012 with OS X Mountain Lion 10.8.
+MacOS implemented KASLR in 2012 with OS X Mountain Lion 10.8.\cite{drk}
 
 \subsection{Implementation differences}
 
@@ -85,15 +85,15 @@ When it comes to the implementations of ASLR and KASLR there are some stark diff
                              & Modules & {\lstinline[basicstyle=\ttfamily]![0xfffff80000000000, 0xfffff80400000000]!} &  2MB & 8192 & 13 bits \\ \\
     macOS   & Kernel  & {\lstinline[basicstyle=\ttfamily]![0xffffff8000000000, 0xffffff8020000000]!} &  2MB &  256 &  8 bits \\ \hline
   \end{tabular}
-  \caption{Differences in allocation categorized by operating system}
+  \caption{Differences in allocation categorized by operating system{\cite[Table~2]{drk}}}
 \end{table*}
 
 \textbf{Windows}: Windows has at most 6 pages (2MB each) for the kernel.
 The kernel and drivers share the same region of \lstinline{0xfffff80000000000} to \lstinline{0xfffff80400000000}.
-Drivers either all come before or after the kernel.
+Drivers either all come before or after the kernel.\cite{drk}
 
 \textbf{Linux}: The kernel is mapped as a continoues range of pages.
 The kernel and drivers are mapped in different regions (\lstinline{0xffffffff80000000} to \lstinline{0xffffffffc0000000} and \lstinline{0xffffffffc0000000} to \lstinline{0xffffffffc0400000} respectively).
-Inbetween each module there is at least one empty page.
+Inbetween each module there is at least one empty page.\cite{drk}
 
-\textbf{macOS}: The kernel is mapped in the range \lstinline{[0xffffff8000000000, 0xffffff8020000000]}.
+\textbf{macOS}: The kernel is mapped in the range \lstinline{[0xffffff8000000000, 0xffffff8020000000]}.\cite{drk}

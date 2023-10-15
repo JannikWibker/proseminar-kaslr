@@ -1,7 +1,7 @@
 The address space of a user space program will typically contain the following:
 
 \begin{itemize}
-  \item The executable: \lstinline{.text}, \lstinline{.data}, \lstinline{.bss}, \lstinline{.rodata} and other sections contained or described in the ELF binary.
+  \item The executable: \code{.text}, \code{.data}, \code{.bss}, \code{.rodata} and other sections contained or described in the ELF binary.
   \item Dynamically linked libraries, such as libc
   \item Pages allocated by the program itself
   \item The stack. In case of a multi-threaded program each thread has its own stack, all sharing one common address space.
@@ -13,27 +13,28 @@ This means that attackers can easily guess where a specific page will be allocat
 To combat this, Address Space Layout Randomization was introduced, which randomizes the address where a page is placed at.
 ASLR is done at runtime, resulting in the memory layout differing with each execution of the program.
 As the kernel is mapped into the address space of every process, it does not change its layout when ASLR is enabled.
-Libc and dynamical libraries are a common target used in exploits of which the addresses are most commonly required for the exploit to function. With ASLR this is made harder.
+Some exploit techniques such as \textit{ROP} (Return Oriented Programming) rely on the knowledge of memory addresses of certain functions or entire libraries.
+Libc and dynamic libraries are a common target for such exploits, with ASLR this is made harder.\cite{pie}
 
 For ASLR to function the executables have to be position independent, meaning that the program works with any base address and does not rely on specific addresses of libraries or pages to function.
 These executables are called Position Independent Executables (or PIE for short).
-The code of such executable is also referred to as Position Independent Code.
+The code of such executable is also referred to as Position Independent Code.\cite{pie}
 
 \subsection{Kernel Address Space Layout Randomization}
 
 The kernel is mapped into the address space of every process in order to speed up system calls by reducing the amount of context switches required.
-Without the kernel address space being mapped into user space every system call would require a context switch to the kernel address space and back incurring a lot of \textit{TLB} (\textbf{T}ranslation \textbf{L}ookaside \textbf{B}uffer) flushes.
+Without the kernel address space being mapped into user space every system call would require a context switch to the kernel address space and back incurring a lot of \textit{TLB} (\textbf{T}ranslation \textbf{L}ookaside \textbf{B}uffer) flushes.\cite{kaiser_lwn}
 
 With Kernel Address Space Layout Randomization the previous shortcoming of ASLR is addressed.
 The addresses to where the kernel and its modules or drivers are mapped are randomized at boot time.
-With this the addresses of all pages might not differ each time a program is executed but each time the system is rebooted.
+With this the addresses of all pages might not differ each time a program is executed but each time the system is rebooted.\cite{kaslr_lwn}
 As a main focus of many malwares is them being able to spread fast and wide, it is paramount that the exploit can be reused across systems without having to be custom tailored to the system itself or even the kernel memory layout which is in use since last booting.
 KASLR breaks this assuming it is not possible for the exploit to figure out the kernel memory layout.
 
 \subsection{Entropy}
 
 With both ASLR and KASLR there are certain predefined memory regions where pages can be mapped to.
-These regions do differ in size across operating systems and versions thereof, as well as CPU architectures (e.g. x86, x86-64, AAarch64).
+These regions do differ in size across operating systems and versions thereof, as well as CPU architectures (e.g., x86, x86-64, AAarch64).\cite{drk}
 
 Oftentimes the measure of entropy is used to describe the effectiveness of ASLR and KASLR.
 Entropy describes the amount of bits of randomness available for a page allocation, i.e. the base 2 logarithm of the size of the region the page can be mapped into.
@@ -41,7 +42,7 @@ The size of a region refers to the amount of pages that can possibly be mapped i
 
 Higher entropy means that there are more possible addresses for a page to be mapped to.
 
-There can be certain rules in place which reduce the entropy for successive allocations,  thus the entropy is often given for the first allocation only where most rules don't apply yet.
+There can be certain rules in place which reduce the entropy for successive allocations,  thus the entropy is often given for the first allocation only where most rules do not apply yet.
 Examples of such rules are an inherent ordering of pages inside a region (module B must come after module A), requested alignment to multiples of the page size, or a minimum amount of empty pages in between each allocation.
 
 With each allocation the entropy for future allocations shrinks as the region is filled up and specific rules may apply.
@@ -62,12 +63,13 @@ With each allocation the entropy for future allocations shrinks as the region is
                                  &                        & KASLR & \\ \hline
     \end{tabular}
     \caption{ASLR and KASLR introduction dates into major operating systems{\cite[Figure~1]{drk}}}
+    \label{table:timeline}
 \end{table}
 
 Windows, Linux and macOS all introduced ASLR and KASLR in the timeframe from 2005 until 2014.
 Linux (Kernel 2.6.12) and macOS (Mac OS X Leopard 10.5) both added support for ASLR in 2005.
 In 2007 Windows Vista added support for both ASLR and KASLR at the same time. The early implementation of ASLR in Windows Vista was however not the most refined, as the effectiveness on 32-bit systems could be reduced when the system was low on memory.
-MacOS implemented KASLR in 2012 with OS X Mountain Lion 10.8.\cite{drk}
+MacOS implemented KASLR in 2012 with OS X Mountain Lion 10.8.\autoref{table:timeline} \cite{drk}
 
 \subsection{Implementation differences}
 
@@ -85,15 +87,18 @@ When it comes to the implementations of ASLR and KASLR there are some stark diff
                              & Modules & {\lstinline[basicstyle=\ttfamily]![0xfffff80000000000, 0xfffff80400000000]!} &  2MB & 8192 & 13 bits \\ \\
     macOS   & Kernel  & {\lstinline[basicstyle=\ttfamily]![0xffffff8000000000, 0xffffff8020000000]!} &  2MB &  256 &  8 bits \\ \hline
   \end{tabular}
-  \caption{Differences in allocation categorized by operating system{\cite[Table~2]{drk}}}
+  \caption{Differences in allocation categorized by operating system (x86-64) {\cite[Table~2]{drk}}}
+  \label{table:implementation-differences}
 \end{table*}
 
 \textbf{Windows}: Windows has at most 6 pages (2MB each) for the kernel.
-The kernel and drivers share the same region of \lstinline{0xfffff80000000000} to \lstinline{0xfffff80400000000}.
-Drivers either all come before or after the kernel.\cite{drk}
+The kernel and drivers share the same region of \code{0xfffff80000000000} to \code{0xfffff80400000000}.
+Drivers either all come before or after the kernel (\autoref{table:implementation-differences}). \cite{drk}
 
-\textbf{Linux}: The kernel is mapped as a continoues range of pages.
-The kernel and drivers are mapped in different regions (\lstinline{0xffffffff80000000} to \lstinline{0xffffffffc0000000} and \lstinline{0xffffffffc0000000} to \lstinline{0xffffffffc0400000} respectively).
-Inbetween each module there is at least one empty page.\cite{drk}
+\textbf{Linux}: The kernel is mapped as a continuous range of pages.
+The kernel and drivers are mapped in different regions (\code{0xffffffff80000000} to \code{0xffffffffc0000000} and \code{0xffffffffc0000000} to \code{0xffffffffc0400000} respectively).
+Inbetween each module there is at least one empty page (\autoref{table:implementation-differences}). \cite{drk}
 
-\textbf{macOS}: The kernel is mapped in the range \lstinline{[0xffffff8000000000, 0xffffff8020000000]}.\cite{drk}
+\textbf{macOS}: The kernel is mapped in the range \code{[0xffffff8000000000, 0xffffff8020000000]}. \cite{drk}
+
+Note that \autoref{table:implementation-differences} assumes x86-64 as the CPU architecture, on Apple Silicon the page size is 16KB.

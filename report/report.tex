@@ -12,25 +12,41 @@
 %%%%%%%%%%%%%%%%%% Document %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % TODO: Change draft to final before submitting final version.
 \usepackage[final]{styles/ka-style}
-\usepackage{cite,xspace,ifthen,graphicx,listings,caption,multirow}
+\usepackage{cite,xspace,ifthen,graphicx,listings,caption,multirow,xcolor}
 
 \captionsetup[figure]{font=small}
 \captionsetup[table]{font=small}
 \captionsetup[listing]{font=small}
 
 \usepackage[
-   pdfauthor={Jannik Wibker},
-   pdftitle={Kernel Address Space Layout Randomization: an Overview},
-   pdfsubject={KASLR},
-   pdfkeywords={Linux, Kernel, ASLR, KASLR, DrK, KPTI}
+  pdfauthor={Jannik Wibker},
+  pdftitle={Kernel Address Space Layout Randomization: an Overview},
+  pdfsubject={KASLR},
+  pdfkeywords={Linux, Kernel, ASLR, KASLR, DrK, KPTI}
 ]{hyperref}
+
+\definecolor{commentsColor}{rgb}{0.43, 0.42, 0.53}
+\definecolor{keywordsColor}{rgb}{0.71, 0.39, 0.48}
+\definecolor{stringColor}{rgb}{0.14, 0.57, 0.36}
+
+\lstset{
+  basicstyle=\small\ttfamily,
+  string=[b]',
+  showspaces=false,
+  showstringspaces=false,
+  showtabs=false,
+  captionpos=b,
+  commentstyle=\color{commentsColor}\textit,
+  keywordstyle=\color{keywordsColor}\textbf, % textbf doesn't work, the default font has no bold apparently #justlatexthings 🤡
+  stringstyle=\color{stringColor}
+}
 
 \begin{document}
 
 \title{ Kernel Address Space Layout Randomization: an Overview }
 
 \newcommand{\todo}[1]{{\texttt{[#1]}}}
-\newcommand{\code}[1]{{\tt \small{#1}}}
+\newcommand{\code}[1]{{\lstinline[basicstyle=\ttfamily]{#1}}}
 
 \maketitle
 %\draftfooter
@@ -47,11 +63,11 @@
 
 \input{background.tex}
 
-\section{The Attack - DrK}\label{sec:drk}
+\section{Attack - DrK}\label{sec:drk}
 
 \input{attack-drk.tex}
 
-\section{The Mitigation - KPTI}\label{sec:kpti}
+\section{Mitigation - KPTI}\label{sec:kpti}
 
 \input{mitigation-kpti.tex}
 

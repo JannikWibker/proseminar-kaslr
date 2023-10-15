@@ -4,11 +4,12 @@ KASLR adds upon this by randomizing the kernel memory as well.
 The kernel address space contains not only the kernel code itself but also kernel data structures, kernel stack and kernel modules.
 Possible ranges for each of these categories of allocations differ between operating systems and in their effectiveness against guessing or inferring their locations \cite{drk}.
 
-DrK abuses the fact that \textit{Intel TSX} (Intel Transactional Synchronization Extension \cite{intel-tsx-overview}) does not notify the kernel of page faults and access violations but rather solely the exception handler of the transaction in user space.
+Drk is an attack against KASLR, in that it tries to derandomize the kernel address space.\cite{drk}
+It abuses the fact that \textit{Intel TSX} (Intel Transactional Synchronization Extension \cite{intel-tsx-overview}) does not notify the kernel of page faults and access violations but rather solely the exception handler of the transaction in user space.
 Using this DrK can do a timing-based attack and scan the address space for allocated pages and obtain whether a page is executable if it is mapped.
 From this the addresses of the kernel as well as its modules can be inferred with high accuracy \cite{drk}.
 
-If the kernel were to be able to detect the memory scanning behaviour or similary unusual interactions of the process it could terminate it.
+If the kernel was able to detect the memory scanning behaviour or similary unusual interactions of the process it could terminate it.
 Due to the nature of TSX not notifying the kernel this is not possible, thus making DrK hard to detect with this type of mitigation attempt.
 
 \textit{KPTI} (Kernel Page Table Isolation) mitigates this by drastically reducing the footprint of the kernel memory that is mapped in user space and thus reducing the amount of information that can be obtained by DrK, Meltdown and similar attacks, as these rely on the page table knowing more locations than are accessible by the user.

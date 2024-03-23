@@ -24,12 +24,12 @@ jobs:
       - name: Install menlo font
         run: |
           # Want to use menlo for code blocks but without including it in the repo itself
-          curl -o Menlo.zip https://fontsnetwork.com/download/Menlo-Regular
+          curl -o Menlo.zip -L https://gist.github.com/justinmayer/7537418/raw/f397bf7440796597880e7aa153d693768ad70ef5/Menlo-for-Powerline.zip
           unzip Menlo.zip
           rm Menlo.zip
           mkdir -p /usr/share/fonts
-          mv 'Menlo Regular/Menlo Regular.ttf' /usr/share/fonts
-          rm -rf 'Menlo Regular'
+          mv 'Menlo for Powerline/Menlo Regular for Powerline.ttf' '/usr/share/fonts/Menlo Regular.ttf'
+          rm -rf 'Menlo for Powerline'
           fc-cache -rfv
 
       - name: Setup pnpm

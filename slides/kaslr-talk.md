@@ -6,7 +6,7 @@ _paginate: false
 
 # Kernel Address Space Layout Randomization
 
-==Jannik Wibker==
+==Janina Wibker==
 
 ---
 
